@@ -1,32 +1,34 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang Nhập Mật Khẩu</title>
+    <title>ZERO SUB</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container" id="loginContainer">
-        <div class="password-container">
-            <input type="password" id="passwordInput" placeholder="Nhập mật khẩu">
-            <button id="confirmButton">Xác nhận</button>
-            <div id="errorMessage" class="error-message hidden">Mật khẩu sai!</div>
-        </div>
-        <div class="key-menu hidden" id="keyMenu">
-            <input type="text" id="newKey" placeholder="Tạo mật khẩu mới">
-            <input type="number" id="expiryTime" placeholder="Thời gian hết hạn (giây)">
-            <button id="saveButton">Lưu</button>
-        </div>
+        <h1>ZERO SUB</h1>
+        <input type="password" id="passwordInput" placeholder="Nhập mật khẩu" />
+        <button id="confirmButton">Xác nhận</button>
+        <p id="errorMessage" class="hidden">Sai mật khẩu</p>
     </div>
 
-    <div id="countdownContainer" class="hidden">
-        <div id="countdown" class="countdown"></div>
-        <button id="openButton" class="hidden">Open</button>
+    <div class="container overlay hidden" id="keyMenu">
+        <h1>ZERO SUB</h1>
+        <input type="text" id="newKey" placeholder="Nhập...">
+        <input type="number" id="expiryTime" placeholder="Thời gian (giây)">
+        <button id="saveButton">Lưu</button>
     </div>
+
+    <div class="container hidden" id="countdownContainer">
+        <button id="openButton" class="hidden">MỞ</button>
+    </div>
+
+    <div id="countdown" class="hidden">00:00:00</div>
 
     <div id="iframeContainer" class="hidden">
-        <iframe src="https://zero-sub.vercel.app" frameborder="0"></iframe>
+        <iframe src="https://zero-sub.vercel.app" width="100%" height="100%"></iframe>
     </div>
 
     <script src="script.js"></script>
