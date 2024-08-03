@@ -101,4 +101,42 @@ window.onload = function() {
             countdownStarted = true; // Đảm bảo đếm ngược chỉ bắt đầu một lần
         }
     }
-}
+};
+
+// Vô hiệu hóa bấm chuột phải
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+});
+
+// Vô hiệu hóa các tổ hợp phím
+document.addEventListener('keydown', function(e) {
+    // Disable F12
+    if (e.keyCode === 123) {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+Shift+I (Inspect)
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+Shift+J (Console)
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+Shift+C (Element selector)
+    if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+U (View source)
+    if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+    }
+
+    // Disable Ctrl+S (Save)
+    if (e.ctrlKey && e.keyCode === 83) {
+        e.preventDefault();
+    }
+});
