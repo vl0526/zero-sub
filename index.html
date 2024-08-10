@@ -3,29 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Dubbing</title>
+    <title>ZERO-SUB</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Video Dubbing</h1>
+        <h1>Video Dubbing with Subtitles</h1>
         <form id="dubbingForm">
             <label for="videoFile" class="label">Upload Video:</label>
             <input type="file" id="videoFile" accept="video/*" class="input" required><br><br>
             
-            <label for="language" class="label">Select Language:</label>
+            <label for="language" class="label">Select Subtitle Language:</label>
             <select id="language" class="input" required>
-                <option value="en-US">English (US)</option>
-                <option value="es-ES">Spanish (Spain)</option>
-                <option value="zh-CN">Chinese (Simplified)</option>
-                <option value="vi-VN">Vietnamese</option>
-                <!-- Add more language options as needed -->
+                <option value="en-US">Tiếng Anh (Mỹ)</option>
+                <option value="es-ES">Tiếng Anh (anh)</option>
+                <option value="zh-CN">Tiếng Trung (giản thể)</option>
+                <option value="vi-VN">Tiếng Việt (viet)</option>
             </select><br><br>
             
             <button type="submit" class="button">Start Dubbing</button>
         </form>
 
-        <h2>Dubbed Video:</h2>
+        <h2>Dubbed Video with Subtitles:</h2>
         <video id="dubbedVideo" controls class="video"></video>
     </div>
 
