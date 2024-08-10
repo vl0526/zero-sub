@@ -1,5 +1,5 @@
 document.getElementById('dubbingForm').addEventListener('submit', async function(event) {
-    event.preventDefault();
+    event.preventDefault(); // Ngăn chặn hành động mặc định của form
 
     const fileInput = document.getElementById('videoFile');
     const languageSelect = document.getElementById('language');
@@ -27,14 +27,12 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         });
 
         if (!response.ok) {
-            // Đọc thông báo lỗi từ API
             const errorText = await response.text();
             throw new Error(`API error: ${errorText}`);
         }
 
         const result = await response.json();
-        
-        // Kiểm tra cấu trúc của kết quả
+
         if (result.dubbedVideoUrl) {
             dubbedVideo.src = result.dubbedVideoUrl;
             dubbedVideo.style.display = 'block';
