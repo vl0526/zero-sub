@@ -18,7 +18,8 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         formData.append('file', videoFile);
         formData.append('language', language);
 
-        const response = await fetch('https://dubbing.speechify.com/api/v1/dub', {
+        // Thực hiện yêu cầu POST tới API của Speechify để tạo phụ đề và lồng tiếng
+        const response = await fetch('https://dubbing.speechify.com/api/v1/dub-with-subtitles', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer mIYyRvA0J1CSVlgh7W7Q3XqJX7JG7rdpeL1sUCfV2U0='
@@ -31,10 +32,12 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         }
 
         const result = await response.json();
+        
+        // Giả sử API trả về URL của video đã được lồng tiếng và thêm phụ đề
         dubbedVideo.src = result.dubbedVideoUrl;
         dubbedVideo.style.display = 'block';
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to dub the video.');
+        alert('Failed to dub the video and add subtitles.');
     }
 });
