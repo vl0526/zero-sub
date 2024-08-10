@@ -3,41 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Dubbing Tool</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Video Dubbing</title>
 </head>
 <body>
-    <div class="container">
-        <h1>AI Dubbing Tool</h1>
+    <h1>Video Dubbing</h1>
+    <form id="dubbingForm">
+        <label for="videoFile">Upload Video:</label>
+        <input type="file" id="videoFile" accept="video/*" required><br><br>
+        
+        <label for="language">Select Language:</label>
+        <select id="language" required>
+            <option value="en-US">English (US)</option>
+            <option value="es-ES">Spanish (Spain)</option>
+            <!-- Add more language options as needed -->
+        </select><br><br>
+        
+        <button type="submit">Start Dubbing</button>
+    </form>
 
-        <div class="upload-section">
-            <label for="videoInput">1. Tải lên tệp</label>
-            <div id="uploadArea" class="upload-area" onclick="document.getElementById('videoInput').click()">
-                Nhấp để tải lên hoặc thả tệp ở đây
-                <br>
-                <small>Hỗ trợ .MP4, .MP3</small>
-            </div>
-            <input type="file" id="videoInput" accept=".mp4, .mp3" onchange="handleFileSelect(event)">
-        </div>
+    <h2>Dubbed Video:</h2>
+    <video id="dubbedVideo" controls></video>
 
-        <div class="language-section">
-            <label for="languageSelect">2. Chọn ngôn ngữ gốc của video:</label>
-            <select id="languageSelect">
-                <option value="chinese">Chinese</option>
-                <option value="vietnamese">Vietnamese</option>
-                <option value="english">English</option>
-            </select>
-        </div>
-
-        <div class="controls">
-            <button id="processBtn" onclick="processVideo()">Dubbing Video</button>
-        </div>
-
-        <div class="preview-section">
-            <iframe id="videoIframe"></iframe>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <script src="dubbing.js"></script>
 </body>
 </html>
