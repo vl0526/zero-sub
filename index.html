@@ -3,32 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZERO SUB</title>
+    <title>AI Dubbing</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container" id="loginContainer">
-        <h1>ZERO SUB</h1>
-        <input type="password" id="passwordInput" placeholder="Nhập mật khẩu" />
-        <button id="confirmButton">Xác nhận</button>
-        <p id="errorMessage" class="hidden">Sai mật khẩu</p>
-    </div>
+    <div class="container">
+        <h1>AI Dubbing Tool</h1>
 
-    <div class="container overlay hidden" id="keyMenu">
-        <h1>ZERO SUB</h1>
-        <input type="text" id="newKey" placeholder="Nhập...">
-        <input type="number" id="expiryTime" placeholder="Thời gian (giây)">
-        <button id="saveButton">Lưu</button>
-    </div>
+        <div class="upload-section">
+            <label for="videoInput">Upload Video:</label>
+            <input type="file" id="videoInput" accept="video/*">
+        </div>
 
-    <div class="container hidden" id="countdownContainer">
-        <button id="openButton" class="hidden">MỞ</button>
-    </div>
+        <div class="text-section">
+            <label for="textInput">Enter Text to Synthesize:</label>
+            <textarea id="textInput" rows="4" placeholder="Enter your text here..."></textarea>
+        </div>
 
-    <div id="countdown" class="hidden">00:00:00</div>
+        <div class="controls">
+            <button id="synthesizeBtn">Synthesize and Dub</button>
+        </div>
 
-    <div id="iframeContainer" class="hidden">
-        <iframe src="https://zero-sub.vercel.app" width="100%" height="100%"></iframe>
+        <div class="preview-section">
+            <video id="videoPreview" controls></video>
+        </div>
     </div>
 
     <script src="script.js"></script>
