@@ -1,21 +1,40 @@
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    const uploadArea = document.getElementById('uploadArea');
+document.getElementById('dubbingForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-    if (file) {
-        uploadArea.textContent = file.name;
+    const fileInput = document.getElementById('videoFile');
+    const languageSelect = document.getElementById('language');
+    const dubbedVideo = document.getElementById('dubbedVideo');
+
+    if (fileInput.files.length === 0) {
+        alert('Please upload a video file.');
+        return;
     }
-}
 
-function processVideo() {
-    const language = document.getElementById('languageSelect').value;
-    
-    // Giả lập URL đã tạo phụ đề với ngôn ngữ đã chọn
-    const baseUrl = 'https://dubbing.speechify.com/hA2Fkgzw6QEQnCgWTqqLNm/studio/translate';
-    const generatedUrl = `${baseUrl}?lang=${language}`;
-    
-    // Chèn URL vào iframe để hiển thị
-    const videoIframe = document.getElementById('videoIframe');
-    videoIframe.src = generatedUrl;
-    videoIframe.style.display = 'block';
-}
+    const videoFile = fileInput.files[0];
+    const language = languageSelect.value;
+
+    try {
+        const formData = new FormData();
+        formData.append('file', videoFile);
+        formData.append('language', language);
+
+        const response = await fetch('https://dubbing.speechify.com/api/v1/dub', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer mIYyRvA0J1CSVlgh7W7Q3XqJX7JG7rdpeL1sUCfV2U0='
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            throw new Error('Error in dubbing process.');
+        }
+
+        const result = await response.json();
+        dubbedVideo.src = result.dubbedVideoUrl;
+        dubbedVideo.style.display = 'block';
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to dub the video.');
+    }
+});
