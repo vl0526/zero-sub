@@ -4,25 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Dubbing</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Video Dubbing</h1>
-    <form id="dubbingForm">
-        <label for="videoFile">Upload Video:</label>
-        <input type="file" id="videoFile" accept="video/*" required><br><br>
-        
-        <label for="language">Select Language:</label>
-        <select id="language" required>
-            <option value="en-US">English (US)</option>
-            <option value="es-ES">Spanish (Spain)</option>
-            <!-- Add more language options as needed -->
-        </select><br><br>
-        
-        <button type="submit">Start Dubbing</button>
-    </form>
+    <div class="container">
+        <h1>Video Dubbing</h1>
+        <form id="dubbingForm">
+            <label for="videoFile" class="label">Upload Video:</label>
+            <input type="file" id="videoFile" accept="video/*" class="input" required><br><br>
+            
+            <label for="language" class="label">Select Language:</label>
+            <select id="language" class="input" required>
+                <option value="en-US">English (US)</option>
+                <option value="es-ES">Spanish (Spain)</option>
+                <option value="zh-CN">Chinese (Simplified)</option>
+                <option value="vi-VN">Vietnamese</option>
+                <!-- Add more language options as needed -->
+            </select><br><br>
+            
+            <button type="submit" class="button">Start Dubbing</button>
+        </form>
 
-    <h2>Dubbed Video:</h2>
-    <video id="dubbedVideo" controls></video>
+        <h2>Dubbed Video:</h2>
+        <video id="dubbedVideo" controls class="video"></video>
+    </div>
 
     <script src="dubbing.js"></script>
 </body>
