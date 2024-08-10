@@ -1,74 +1,74 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* Reset CSS để đảm bảo sự nhất quán trên các trình duyệt */
+* {
     margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
 }
 
+/* Định dạng chung cho container chính */
 .container {
-    background-color: #fff;
+    max-width: 500px;
+    margin: 0 auto;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
+/* Tiêu đề trang */
 h1 {
+    font-size: 24px;
+    color: #333;
     margin-bottom: 20px;
 }
 
-.upload-section,
-.language-section,
-.controls,
-.preview-section {
-    margin-bottom: 15px;
-}
-
-label {
+/* Nhãn và input chung */
+.label {
+    font-size: 16px;
+    color: #555;
     display: block;
-    margin-bottom: 5px;
+    text-align: left;
+    margin-bottom: 8px;
 }
 
-.upload-area {
-    border: 2px dashed #007bff;
-    padding: 30px;
-    cursor: pointer;
-    color: #007bff;
-    margin-bottom: 10px;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-select {
+.input {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 20px;
 }
 
-button {
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: #fff;
+/* Nút bấm */
+.button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-button:disabled {
-    background-color: #ccc;
+.button:hover {
+    background-color: #45a049;
 }
 
-iframe {
+/* Video player */
+.video {
     width: 100%;
-    height: 300px;
-    border: none;
-    border-radius: 10px;
-    display: none;
+    margin-top: 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Định dạng chung cho h2 */
+h2 {
+    font-size: 20px;
+    color: #333;
+    margin-top: 20px;
 }
