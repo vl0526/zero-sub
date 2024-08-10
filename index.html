@@ -10,6 +10,10 @@
             font-size: 20px;
             color: red;
         }
+        #timer {
+            margin-top: 10px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +42,9 @@
         const WS_URL = 'wss://api.subtitleextractor.com/updates';
         const API_KEY = 'YjhFoy0VN7Cj8inhxHvzoMYNyavuY0PHm2rUMztK3a4a5379'; // Thay thế bằng API key của bạn
 
-        let startTime;
+        const MAX_WAIT_TIME = 600; // 10 phút tối đa (600 giây)
+        let endTime;
+        let timerInterval;
 
         document.getElementById('subtitleForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -55,8 +61,8 @@
             }
 
             try {
-                startTime = Date.now();
-                const timerInterval = setInterval(updateTimer, 1000);
+                endTime = Date.now() + MAX_WAIT_TIME * 1000; // Thời gian kết thúc đếm ngược
+                timerInterval = setInterval(updateTimer, 1000);
 
                 // Bước 1: Lấy presigned URL để tải lên
                 const presignedResponse = await fetch(`${API_URL}/upload/file`, {
@@ -65,16 +71,25 @@
                         'Authorization': `Bearer ${API_KEY}`
                     }
                 });
+
+                if (!presignedResponse.ok) {
+                    throw new Error(`Lỗi khi lấy presigned URL: ${presignedResponse.statusText}`);
+                }
+
                 const presignedData = await presignedResponse.json();
 
                 // Bước 2: Tải tệp lên S3 bằng presigned URL
-                await fetch(presignedData.uploadUrl, {
+                const uploadResponse = await fetch(presignedData.uploadUrl, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/octet-stream'
                     },
                     body: file
                 });
+
+                if (!uploadResponse.ok) {
+                    throw new Error('Lỗi khi tải lên tệp.');
+                }
 
                 // Bước 3: Tạo quá trình trích xuất phụ đề
                 const extractionResponse = await fetch(`${API_URL}/extract`, {
@@ -89,6 +104,11 @@
                         language: language
                     })
                 });
+
+                if (!extractionResponse.ok) {
+                    throw new Error(`Lỗi khi tạo quá trình trích xuất: ${extractionResponse.statusText}`);
+                }
+
                 const extractionData = await extractionResponse.json();
 
                 // Bước 4: Kết nối với WebSocket để theo dõi quá trình trích xuất
@@ -117,14 +137,33 @@
                 };
 
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error:', error.message);
                 document.getElementById('result').textContent = 'Đéo được';
+                clearInterval(timerInterval);
             }
         });
 
-        // Bước 5: Tải xuống tệp phụ đề
+        function updateTimer() {
+            const currentTime = Date.now();
+            const remainingTime = Math.max(0, Math.floor((endTime - currentTime) / 1000));
+            const minutes = Math.floor(remainingTime / 60);
+            const seconds = remainingTime % 60;
+            document.getElementById('timer').textContent = `Đang chờ... ${minutes} phút ${seconds} giây còn lại.`;
+
+            if (remainingTime === 0) {
+                clearInterval(timerInterval);
+                document.getElementById('result').textContent = 'Đợi quá lâu, vui lòng thử lại.';
+            }
+        }
+
+        // Chức năng tải xuống phụ đề
         async function downloadSRT(srtUrl) {
             const response = await fetch(srtUrl);
+            if (!response.ok) {
+                document.getElementById('result').textContent = 'Lỗi khi tải phụ đề.';
+                return;
+            }
+
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
 
@@ -137,12 +176,6 @@
 
             window.URL.revokeObjectURL(url);
             document.getElementById('result').textContent = 'Tải phụ đề thành công.';
-        }
-
-        function updateTimer() {
-            const currentTime = Date.now();
-            const elapsedTime = Math.floor((currentTime - startTime) / 1000);
-            document.getElementById('timer').textContent = `Đang chờ... ${elapsedTime} giây đã trôi qua.`;
         }
     </script>
 </body>
