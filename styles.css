@@ -23,7 +23,7 @@ h1 {
 }
 
 .upload-section,
-.text-section,
+.language-section,
 .controls,
 .preview-section {
     margin-bottom: 15px;
@@ -34,8 +34,19 @@ label {
     margin-bottom: 5px;
 }
 
-input[type="file"],
-textarea {
+.upload-area {
+    border: 2px dashed #007bff;
+    padding: 30px;
+    cursor: pointer;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+select {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
