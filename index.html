@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Dubbing</title>
+    <title>AI Dubbing Tool</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,17 +11,26 @@
         <h1>AI Dubbing Tool</h1>
 
         <div class="upload-section">
-            <label for="videoInput">Upload Video:</label>
-            <input type="file" id="videoInput" accept="video/*">
+            <label for="videoInput">1. Tải lên tệp</label>
+            <div id="uploadArea" class="upload-area" onclick="document.getElementById('videoInput').click()">
+                Nhấp để tải lên hoặc thả tệp ở đây
+                <br>
+                <small>Hỗ trợ .MP4, .MP3</small>
+            </div>
+            <input type="file" id="videoInput" accept=".mp4, .mp3" onchange="handleFileSelect(event)">
         </div>
 
-        <div class="text-section">
-            <label for="textInput">Enter Text to Synthesize:</label>
-            <textarea id="textInput" rows="4" placeholder="Enter your text here..."></textarea>
+        <div class="language-section">
+            <label for="languageSelect">2. Chọn ngôn ngữ gốc của video:</label>
+            <select id="languageSelect">
+                <option value="chinese">Chinese</option>
+                <option value="vietnamese">Vietnamese</option>
+                <option value="english">English</option>
+            </select>
         </div>
 
         <div class="controls">
-            <button id="synthesizeBtn">Synthesize and Dub</button>
+            <button id="processBtn" onclick="processVideo()">Dubbing Video</button>
         </div>
 
         <div class="preview-section">
