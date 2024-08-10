@@ -18,7 +18,6 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         formData.append('file', videoFile);
         formData.append('language', language);
 
-        // Thực hiện yêu cầu POST tới API của Speechify để tạo phụ đề và lồng tiếng
         const response = await fetch('https://dubbing.speechify.com/api/v1/dub-with-subtitles', {
             method: 'POST',
             headers: {
@@ -28,16 +27,22 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         });
 
         if (!response.ok) {
-            throw new Error('Error in dubbing process.');
+            // Đọc thông báo lỗi từ API
+            const errorText = await response.text();
+            throw new Error(`API error: ${errorText}`);
         }
 
         const result = await response.json();
         
-        // Giả sử API trả về URL của video đã được lồng tiếng và thêm phụ đề
-        dubbedVideo.src = result.dubbedVideoUrl;
-        dubbedVideo.style.display = 'block';
+        // Kiểm tra cấu trúc của kết quả
+        if (result.dubbedVideoUrl) {
+            dubbedVideo.src = result.dubbedVideoUrl;
+            dubbedVideo.style.display = 'block';
+        } else {
+            throw new Error('No video URL returned from the API.');
+        }
     } catch (error) {
         console.error('Error:', error);
-        alert('Failed to dub the video and add subtitles.');
+        alert(`Failed to dub the video and add subtitles: ${error.message}`);
     }
 });
