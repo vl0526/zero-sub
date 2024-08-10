@@ -18,7 +18,8 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
         formData.append('file', videoFile);
         formData.append('language', language);
 
-        const response = await fetch('https://dubbing.speechify.com/api/v1/dub-with-subtitles', {
+        // Sử dụng endpoint mới
+        const response = await fetch('https://dubbing.speechify.com/studio/translate', {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer mIYyRvA0J1CSVlgh7W7Q3XqJX7JG7rdpeL1sUCfV2U0='
@@ -33,6 +34,7 @@ document.getElementById('dubbingForm').addEventListener('submit', async function
 
         const result = await response.json();
 
+        // Kiểm tra kết quả từ API
         if (result.dubbedVideoUrl) {
             dubbedVideo.src = result.dubbedVideoUrl;
             dubbedVideo.style.display = 'block';
