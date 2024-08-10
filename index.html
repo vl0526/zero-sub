@@ -3,31 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Dubbing with Subtitles</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Tạo Phụ Đề Tự Động</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Video Dubbing with Subtitles</h1>
-        <form id="dubbingForm">
-            <label for="videoFile" class="label">Upload Video:</label>
-            <input type="file" id="videoFile" accept="video/*" class="input" required><br><br>
-            
-            <label for="language" class="label">Select Subtitle Language:</label>
-            <select id="language" class="input" required>
-                <option value="en-US">English (US)</option>
-                <option value="es-ES">Spanish (Spain)</option>
-                <option value="zh-CN">Chinese (Simplified)</option>
-                <option value="vi-VN">Vietnamese</option>
-            </select><br><br>
-            
-            <button type="submit" class="button">Start Dubbing</button>
-        </form>
+    <h1>Tạo Phụ Đề Tự Động</h1>
+    <form id="subtitleForm">
+        <label for="fileUpload">Tải Video hoặc MP3 lên:</label>
+        <input type="file" id="fileUpload" accept="video/*,audio/*" required>
 
-        <h2>Dubbed Video with Subtitles:</h2>
-        <video id="dubbedVideo" controls class="video"></video>
-    </div>
+        <label for="language">Chọn Ngôn Ngữ của Video:</label>
+        <select id="language" required>
+            <option value="auto">Auto-Detect</option>
+            <option value="en">English</option>
+            <option value="zh">Chinese</option>
+            <option value="vi">Vietnamese</option>
+            <!-- Thêm các tùy chọn ngôn ngữ khác -->
+        </select>
 
-    <script src="script.js"></script>
+        <button type="submit">Start</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        const API_URL = 'https://subtitleextractor.com/api/v1';
+        const WS_URL = 'wss://api.subtitleextractor.com/updates';
+        const API_KEY = 'your_api_key_here'; // Thay thế bằng API key của bạn
+
+        document.getElementById('subtitleForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            const language = document.getElementById('language').value;
+
+            if (!file) {
+                alert('Vui lòng chọn một tệp để tải lên.');
+                return;
+            }
+
+            try {
+                // Bước 1: Lấy presigned URL để tải lên
+                const presignedResponse = await fetch(`${API_URL}/upload/file`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`
+                    }
+                });
+                const presignedData = await presignedResponse.json();
+
+                // Bước 2: Tải tệp lên S3 bằng presigned URL
+                await fetch(presignedData.uploadUrl, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/octet-stream'
+                    },
+                    body: file
+                });
+
+                // Bước 3: Tạo quá trình trích xuất phụ đề
+                const extractionResponse = await fetch(`${API_URL}/extract`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        method: 'audio', // hoặc 'vision', tùy chọn
+                        uploadId: presignedData.uploadId,
+                        language: language
+                    })
+                });
+                const extractionData = await extractionResponse.json();
+
+                // Bước 4: Kết nối với WebSocket để theo dõi quá trình trích xuất
+                const ws = new WebSocket(`${WS_URL}?token=${API_KEY}`);
+
+                ws.onopen = () => {
+                    ws.send(JSON.stringify({
+                        action: "subscribe",
+                        jobId: extractionData.id
+                    }));
+                };
+
+                ws.onmessage = (event) => {
+                    const message = JSON.parse(event.data);
+                    if (message.type === 'status' && message.status === 'SUCCEEDED') {
+                        ws.close();
+                        downloadSRT(message.outputUrl);
+                    }
+                };
+
+                ws.onerror = (error) => {
+                    console.error('WebSocket error:', error);
+                };
+
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Đã xảy ra lỗi trong quá trình trích xuất phụ đề.';
+            }
+        });
+
+        // Bước 5: Tải xuống tệp phụ đề
+        async function downloadSRT(srtUrl) {
+            const response = await fetch(srtUrl);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'subtitles.srt';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+
+            window.URL.revokeObjectURL(url);
+            document.getElementById('result').textContent = 'Tải phụ đề thành công.';
+        }
+    </script>
 </body>
 </html>
