@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tạo Phụ Đề Tự Động</title>
+    <style>
+        #result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: red;
+        }
+    </style>
 </head>
 <body>
     <h1>Tạo Phụ Đề Tự Động</h1>
@@ -24,14 +31,19 @@
     </form>
 
     <div id="result"></div>
+    <div id="timer"></div>
 
     <script>
         const API_URL = 'https://subtitleextractor.com/api/v1';
         const WS_URL = 'wss://api.subtitleextractor.com/updates';
         const API_KEY = '35|YjhFoy0VN7Cj8inhxHvzoMYNyavuY0PHm2rUMztK3a4a5379'; // Thay thế bằng API key của bạn
 
+        let startTime;
+
         document.getElementById('subtitleForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            document.getElementById('result').textContent = '';
+            document.getElementById('timer').textContent = '';
 
             const fileInput = document.getElementById('fileUpload');
             const file = fileInput.files[0];
@@ -43,6 +55,9 @@
             }
 
             try {
+                startTime = Date.now();
+                const timerInterval = setInterval(updateTimer, 1000);
+
                 // Bước 1: Lấy presigned URL để tải lên
                 const presignedResponse = await fetch(`${API_URL}/upload/file`, {
                     method: 'POST',
@@ -90,17 +105,20 @@
                     const message = JSON.parse(event.data);
                     if (message.type === 'status' && message.status === 'SUCCEEDED') {
                         ws.close();
+                        clearInterval(timerInterval);
                         downloadSRT(message.outputUrl);
                     }
                 };
 
                 ws.onerror = (error) => {
                     console.error('WebSocket error:', error);
+                    clearInterval(timerInterval);
+                    document.getElementById('result').textContent = 'Đéo được';
                 };
 
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('result').textContent = 'Đã xảy ra lỗi trong quá trình trích xuất phụ đề.';
+                document.getElementById('result').textContent = 'Đéo được';
             }
         });
 
@@ -119,6 +137,12 @@
 
             window.URL.revokeObjectURL(url);
             document.getElementById('result').textContent = 'Tải phụ đề thành công.';
+        }
+
+        function updateTimer() {
+            const currentTime = Date.now();
+            const elapsedTime = Math.floor((currentTime - startTime) / 1000);
+            document.getElementById('timer').textContent = `Đang chờ... ${elapsedTime} giây đã trôi qua.`;
         }
     </script>
 </body>
