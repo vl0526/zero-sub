@@ -3,114 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Livestream Your Screen</title>
+    <title>Run Python with Brython</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.10.7/brython.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
+            margin: 20px;
         }
-        .container {
-            width: 50%;
-            margin: 50px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        h1 {
-            color: #333;
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
         }
         button {
+            padding: 10px 15px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
             cursor: pointer;
-            font-size: 16px;
-            margin: 10px;
         }
-        button:hover {
-            background-color: #45a049;
-        }
-        video {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-            display: none;
-        }
-        #linkContainer {
-            margin-top: 20px;
-            display: none;
-        }
-        #linkContainer a {
-            color: blue;
-            text-decoration: none;
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
-<body>
+<body onload="brython()">
+    <h1>Run Python Code</h1>
+    <textarea id="code" placeholder="Write your Python code here..."></textarea><br>
+    <button id="run-btn">Run Code</button>
+    <h2>Result:</h2>
+    <pre id="result"></pre>
 
-    <div class="container">
-        <h1>Livestream Your Screen</h1>
-        <button id="startStreamBtn">Start Screen Livestream</button>
-        <video id="screenVideo" autoplay controls></video>
-        <div id="linkContainer">
-            <p>Share this link to watch the livestream:</p>
-            <a id="streamLink" href="#" target="_blank">Livestream Link</a>
-        </div>
-    </div>
+    <script type="text/python">
+        from browser import document
 
-    <script>
-        const startStreamBtn = document.getElementById('startStreamBtn');
-        const screenVideo = document.getElementById('screenVideo');
-        const streamLink = document.getElementById('streamLink');
-        const linkContainer = document.getElementById('linkContainer');
-        
-        let mediaStream = null;
+        def run_python_code(event):
+            code = document["code"].value
+            try:
+                exec(code, {})
+            except Exception as e:
+                document["result"].text = str(e)
 
-        // Hàm để bắt đầu quay màn hình và livestream
-        startStreamBtn.addEventListener('click', async () => {
-            try {
-                // Yêu cầu quyền quay màn hình
-                mediaStream = await navigator.mediaDevices.getDisplayMedia({
-                    video: true,
-                    audio: false
-                });
-
-                // Hiển thị video quay màn hình cục bộ
-                screenVideo.srcObject = mediaStream;
-                screenVideo.style.display = 'block';
-
-                // Giả lập tạo link livestream (phải kết nối WebRTC hoặc server thực tế)
-                const uniqueLink = window.location.href + 'live/' + Date.now();
-                streamLink.href = uniqueLink;
-                streamLink.textContent = uniqueLink;
-                linkContainer.style.display = 'block';
-
-                // TODO: Truyền stream đến backend WebRTC để chia sẻ với người khác
-                // Bạn cần tích hợp phần WebRTC signaling server tại đây.
-
-            } catch (err) {
-                console.error("Error starting screen share: ", err);
-                alert('Screen sharing failed. Please try again.');
-            }
-        });
-
-        // Hàm để kết thúc quay màn hình và tắt stream
-        function stopStream() {
-            if (mediaStream) {
-                let tracks = mediaStream.getTracks();
-                tracks.forEach(track => track.stop());
-                screenVideo.style.display = 'none';
-                linkContainer.style.display = 'none';
-            }
-        }
-
-        // Bắt sự kiện khi trang bị đóng hoặc tải lại
-        window.addEventListener('beforeunload', stopStream);
+        document["run-btn"].bind("click", run_python_code)
     </script>
-
 </body>
 </html>
