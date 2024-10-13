@@ -40,7 +40,7 @@
             await ffmpeg.load();
             ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
 
-            // Lấy kích thước video
+            // Lấy nửa dưới video
             await ffmpeg.run('-i', 'input.mp4', '-vf', 'crop=iw:ih/2:0:ih/2', 'output.mp4');
 
             // Chia nhỏ video thành các khung hình từ nửa dưới
@@ -56,7 +56,8 @@
                     const blob = new Blob([data.buffer], { type: 'image/png' });
                     const url = URL.createObjectURL(blob);
 
-                    const result = await Tesseract.recognize(url, 'vie', { logger: info => console.log(info) });
+                    // Thay đổi ngôn ngữ nhận diện sang tiếng Trung
+                    const result = await Tesseract.recognize(url, 'chi_sim', { logger: info => console.log(info) });
                     extractedText += result.data.text + '\n'; // Ghi nhận văn bản
                 } catch (error) {
                     // Nếu không có khung hình nào nữa
@@ -64,8 +65,9 @@
                 }
             }
 
-            // Hiển thị kết quả
-            resultContainer.textContent = extractedText;
+            // Chỉ hiển thị 5 dòng văn bản đầu tiên
+            const displayedLines = extractedText.split('\n').slice(0, 5).join('\n');
+            resultContainer.textContent = displayedLines;
         }
 
         // Xử lý sự kiện cho nút trích xuất
