@@ -3,35 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subtitle Generator</title>
-    <link rel="stylesheet" href="/styles.css">
+    <title>Text Extractor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Subtitle Generator</h1>
-        <form id="upload-form" enctype="multipart/form-data">
-            <input type="file" id="video-file" accept="video/*" required>
-            <button type="submit">Upload Video</button>
-        </form>
-        <h2>Generated Subtitles:</h2>
-        <pre id="subtitles"></pre>
+        <h1>Text Extractor from Image</h1>
+        <input type="file" id="file-input" accept="image/*" />
+        <button id="extract-button">Extract Text</button>
+        <h2>Extracted Text:</h2>
+        <pre id="result"></pre>
     </div>
 
     <script>
-        document.getElementById('upload-form').onsubmit = async function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('video-file');
-            const formData = new FormData();
-            formData.append('video', fileInput.files[0]);
+        document.getElementById('extract-button').addEventListener('click', function() {
+            const fileInput = document.getElementById('file-input');
+            const file = fileInput.files[0];
 
-            const response = await fetch('/api/generate_subtitles', {
-                method: 'POST',
-                body: formData
+            if (!file) {
+                alert('Please upload an image file first!');
+                return;
+            }
+
+            // Use Tesseract.js to recognize text
+            Tesseract.recognize(
+                file,
+                'eng',
+                {
+                    logger: info => console.log(info) // Log progress information
+                }
+            ).then(({ data: { text } }) => {
+                document.getElementById('result').textContent = text;
+            }).catch(err => {
+                console.error(err);
+                document.getElementById('result').textContent = 'Error: ' + err.message;
             });
-
-            const data = await response.json();
-            document.getElementById('subtitles').innerText = data.subtitles || data.error;
-        };
+        });
     </script>
 </body>
 </html>
