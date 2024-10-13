@@ -3,100 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trích Xuất Văn Bản Từ Video</title>
+    <title>Trích Xuất Văn Bản Từ Ảnh</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/0.10.0/ffmpeg.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; }
-        input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; }
-        button { background: #4CAF50; color: white; border: none; cursor: pointer; }
+        textarea { width: 100%; height: 150px; border-radius: 5px; padding: 10px; }
+        button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; }
         button:hover { background: #45a049; }
         pre { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; }
         #loading { display: none; text-align: center; margin-top: 20px; }
-        #end-time { margin-top: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Trích Xuất Văn Bản Từ Video</h1>
-        <input type="file" id="file-input" accept="video/*" />
-        <button id="extract-button">Trích Xuất Phụ Đề</button>
+        <h1>Trích Xuất Văn Bản Từ Ảnh</h1>
+        <textarea id="image-data" placeholder="Dán ảnh vào đây (Ctrl + V)"></textarea>
+        <button id="extract-button">Trích Xuất Văn Bản</button>
         <div id="loading">Đang trích xuất... Vui lòng chờ...</div>
         <h2>Kết Quả:</h2>
         <pre id="result"></pre>
-        <div id="end-time"></div> <!-- Phần tử mới để hiển thị thời gian kết thúc -->
     </div>
 
     <script>
-        const fileInput = document.getElementById('file-input');
+        const imageDataInput = document.getElementById('image-data');
         const extractButton = document.getElementById('extract-button');
         const resultContainer = document.getElementById('result');
         const loadingContainer = document.getElementById('loading');
-        const endTimeContainer = document.getElementById('end-time'); // Phần tử để hiển thị thời gian kết thúc
 
-        // Hàm trích xuất văn bản từ video
-        async function extractTextFromVideo(file) {
-            // Hiển thị chỉ báo tải
-            loadingContainer.style.display = 'block';
-            resultContainer.textContent = ''; // Xóa kết quả trước đó
-            endTimeContainer.textContent = ''; // Xóa thời gian trước đó
-
-            // Khởi tạo FFmpeg
-            const { createFFmpeg, fetchFile } = FFmpeg;
-            const ffmpeg = createFFmpeg({ log: true });
-
-            // Tải FFmpeg
-            await ffmpeg.load();
-            ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
-
-            // Cắt đoạn video 5 giây đầu tiên
-            await ffmpeg.run('-i', 'input.mp4', '-ss', '0', '-t', '5', 'output.mp4');
-
-            // Lấy nửa dưới video
-            await ffmpeg.run('-i', 'output.mp4', '-vf', 'crop=iw:ih/2:0:ih/2', 'output_cropped.mp4');
-
-            // Chia nhỏ video thành các khung hình từ nửa dưới
-            await ffmpeg.run('-i', 'output_cropped.mp4', '-vf', 'fps=1', 'output%d.png');
-
-            let extractedText = '';
-
-            // Nhận diện văn bản từ từng khung hình
-            for (let i = 0; i < 100; i++) {
-                try {
-                    const frame = `output${i}.png`;
-                    const data = ffmpeg.FS('readFile', frame);
-                    const blob = new Blob([data.buffer], { type: 'image/png' });
+        // Hàm xử lý khi dán ảnh
+        imageDataInput.addEventListener('paste', async (event) => {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.startsWith('image/')) {
+                    const blob = items[i].getAsFile();
                     const url = URL.createObjectURL(blob);
-
-                    // Nhận diện văn bản bằng tiếng Trung
-                    const result = await Tesseract.recognize(url, 'chi_sim', { logger: info => console.log(info) });
-                    extractedText += result.data.text + '\n'; // Ghi nhận văn bản
-                } catch (error) {
-                    // Nếu không có khung hình nào nữa
-                    break;
+                    imageDataInput.value = url; // Hiển thị URL trong textarea
                 }
             }
+        });
 
-            // Chỉ hiển thị 5 dòng văn bản đầu tiên
-            const displayedLines = extractedText.split('\n').slice(0, 5).join('\n');
-            resultContainer.textContent = displayedLines;
+        // Hàm trích xuất văn bản từ ảnh
+        async function extractTextFromImage(imageUrl) {
+            loadingContainer.style.display = 'block'; // Hiển thị thông báo tải
+            resultContainer.textContent = ''; // Xóa kết quả trước đó
 
-            // Hiển thị thời gian kết thúc
-            const endTime = new Date().toLocaleTimeString();
-            endTimeContainer.textContent = `Quá trình trích xuất kết thúc lúc: ${endTime}`;
-
-            // Ẩn chỉ báo tải khi hoàn thành
-            loadingContainer.style.display = 'none';
+            try {
+                const { data: { text } } = await Tesseract.recognize(imageUrl, 'vie', {
+                    logger: info => console.log(info) // Ghi log thông tin
+                });
+                resultContainer.textContent = text; // Hiển thị văn bản trích xuất
+            } catch (error) {
+                resultContainer.textContent = 'Lỗi khi trích xuất văn bản: ' + error.message;
+            } finally {
+                loadingContainer.style.display = 'none'; // Ẩn thông báo tải
+            }
         }
 
         // Xử lý sự kiện cho nút trích xuất
         extractButton.addEventListener('click', () => {
-            if (fileInput.files.length > 0) {
-                extractTextFromVideo(fileInput.files[0]);
+            const imageUrl = imageDataInput.value.trim();
+            if (imageUrl) {
+                extractTextFromImage(imageUrl); // Gọi hàm trích xuất
             } else {
-                alert('Vui lòng chọn video!');
+                alert('Vui lòng dán ảnh!');
             }
         });
     </script>
