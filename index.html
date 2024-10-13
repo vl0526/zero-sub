@@ -81,6 +81,7 @@
                     const file = item.getAsFile();
                     const imgUrl = URL.createObjectURL(file);
                     processImage(imgUrl);
+                    imageUrlInput.value = ''; // Xóa ô nhập liệu sau khi dán
                     break; // Dừng lại sau khi dán một hình ảnh
                 }
             }
