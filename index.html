@@ -31,6 +31,7 @@
         const extractButton = document.getElementById('extract-button');
         const resultContainer = document.getElementById('result');
 
+        // Xử lý ảnh từ URL hoặc file tải lên
         async function processImage(imageSrc) {
             const img = new Image();
             img.src = imageSrc;
@@ -60,6 +61,7 @@
             };
         }
 
+        // Xử lý sự kiện cho nút trích xuất
         extractButton.addEventListener('click', () => {
             const imageUrl = imageUrlInput.value.trim();
             if (imageUrl) {
@@ -71,6 +73,20 @@
             }
         });
 
+        // Xử lý dán hình ảnh từ clipboard
+        imageUrlInput.addEventListener('paste', async (event) => {
+            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.kind === 'file') {
+                    const file = item.getAsFile();
+                    const imgUrl = URL.createObjectURL(file);
+                    processImage(imgUrl);
+                    break; // Dừng lại sau khi dán một hình ảnh
+                }
+            }
+        });
+
+        // Xử lý sự kiện khi nhấn Enter trong ô nhập URL
         imageUrlInput.addEventListener('keydown', e => {
             if (e.key === 'Enter') extractButton.click();
         });
