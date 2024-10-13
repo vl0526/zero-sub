@@ -47,11 +47,14 @@
             await ffmpeg.load();
             ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
 
+            // Cắt đoạn video 5 giây đầu tiên
+            await ffmpeg.run('-i', 'input.mp4', '-ss', '0', '-t', '5', 'output.mp4');
+
             // Lấy nửa dưới video
-            await ffmpeg.run('-i', 'input.mp4', '-vf', 'crop=iw:ih/2:0:ih/2', 'output.mp4');
+            await ffmpeg.run('-i', 'output.mp4', '-vf', 'crop=iw:ih/2:0:ih/2', 'output_cropped.mp4');
 
             // Chia nhỏ video thành các khung hình từ nửa dưới
-            await ffmpeg.run('-i', 'output.mp4', '-vf', 'fps=1', 'output%d.png');
+            await ffmpeg.run('-i', 'output_cropped.mp4', '-vf', 'fps=1', 'output%d.png');
 
             let extractedText = '';
 
