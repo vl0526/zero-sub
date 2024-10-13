@@ -3,17 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Extractor</title>
+    <title>Text Extractor from Image</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+            overflow: auto;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Text Extractor from Image</h1>
+        <h1>Trích Xuất Văn Bản Từ Ảnh</h1>
         <input type="file" id="file-input" accept="image/*" />
-        <button id="extract-button">Extract Text</button>
-        <h2>Extracted Text:</h2>
-        <pre id="result"></pre>
+        <button id="extract-button">Trích Xuất Văn Bản</button>
+        <h2>Văn Bản Trích Xuất:</h2>
+        <pre id="result" contenteditable="true" placeholder="Dán văn bản ở đây"></pre>
     </div>
 
     <script>
@@ -22,23 +60,31 @@
             const file = fileInput.files[0];
 
             if (!file) {
-                alert('Please upload an image file first!');
+                alert('Vui lòng tải lên một file ảnh trước!');
                 return;
             }
 
-            // Use Tesseract.js to recognize text
+            // Sử dụng Tesseract.js để nhận diện văn bản
             Tesseract.recognize(
                 file,
-                'eng',
+                'eng', // Ngôn ngữ nhận diện
                 {
-                    logger: info => console.log(info) // Log progress information
+                    logger: info => console.log(info) // Ghi log thông tin tiến trình
                 }
             ).then(({ data: { text } }) => {
+                // Dán văn bản vào thẻ <pre>
                 document.getElementById('result').textContent = text;
             }).catch(err => {
                 console.error(err);
-                document.getElementById('result').textContent = 'Error: ' + err.message;
+                document.getElementById('result').textContent = 'Lỗi: ' + err.message;
             });
+        });
+
+        // Để dán văn bản từ clipboard
+        document.getElementById('result').addEventListener('paste', function(e) {
+            const text = e.clipboardData.getData('text');
+            document.getElementById('result').textContent += text; // Thêm văn bản dán vào nội dung hiện tại
+            e.preventDefault(); // Ngăn chặn hành động dán mặc định
         });
     </script>
 </body>
