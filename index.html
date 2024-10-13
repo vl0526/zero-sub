@@ -73,6 +73,11 @@
             }
         });
 
+        // Xử lý sự kiện khi nhấn Enter trong ô nhập URL
+        imageUrlInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter') extractButton.click();
+        });
+
         // Xử lý dán hình ảnh từ clipboard
         imageUrlInput.addEventListener('paste', async (event) => {
             const items = (event.clipboardData || event.originalEvent.clipboardData).items;
@@ -80,16 +85,10 @@
                 if (item.kind === 'file') {
                     const file = item.getAsFile();
                     const imgUrl = URL.createObjectURL(file);
-                    processImage(imgUrl);
-                    imageUrlInput.value = ''; // Xóa ô nhập liệu sau khi dán
+                    imageUrlInput.value = imgUrl; // Đặt URL hình ảnh vào ô nhập liệu
                     break; // Dừng lại sau khi dán một hình ảnh
                 }
             }
-        });
-
-        // Xử lý sự kiện khi nhấn Enter trong ô nhập URL
-        imageUrlInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') extractButton.click();
         });
     </script>
 </body>
