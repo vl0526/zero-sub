@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trích Xuất Văn Bản Từ Ảnh</title>
+    <title>Trích Xuất Văn Bản Từ Video</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg.js/0.10.0/ffmpeg.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
@@ -17,77 +18,62 @@
 </head>
 <body>
     <div class="container">
-        <h1>Trích Xuất Văn Bản</h1>
-        <input type="text" id="image-url" placeholder="Dán URL hoặc Ctrl+V hình ảnh" />
-        <input type="file" id="file-input" accept="image/*" />
-        <button id="extract-button">Trích Xuất</button>
+        <h1>Trích Xuất Văn Bản Từ Video</h1>
+        <input type="file" id="file-input" accept="video/*" />
+        <button id="extract-button">Trích Xuất Phụ Đề</button>
         <h2>Kết Quả:</h2>
         <pre id="result"></pre>
     </div>
 
     <script>
-        const imageUrlInput = document.getElementById('image-url');
         const fileInput = document.getElementById('file-input');
         const extractButton = document.getElementById('extract-button');
         const resultContainer = document.getElementById('result');
 
-        // Xử lý ảnh từ URL hoặc file tải lên
-        async function processImage(imageSrc) {
-            const img = new Image();
-            img.src = imageSrc;
-            img.onload = async () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                
-                // Chuyển ảnh sang đen trắng
-                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                for (let i = 0; i < imgData.data.length; i += 4) {
-                    const avg = (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3;
-                    imgData.data[i] = imgData.data[i + 1] = imgData.data[i + 2] = avg;
-                }
-                ctx.putImageData(imgData, 0, 0);
+        // Hàm trích xuất văn bản từ video
+        async function extractTextFromVideo(file) {
+            // Khởi tạo FFmpeg
+            const { createFFmpeg, fetchFile } = FFmpeg;
+            const ffmpeg = createFFmpeg({ log: true });
 
-                // Nhận diện văn bản
-                Tesseract.recognize(canvas.toDataURL(), 'vie', { logger: info => console.log(info) })
-                    .then(({ data: { text } }) => {
-                        resultContainer.textContent = text;
-                    })
-                    .catch(err => {
-                        resultContainer.textContent = 'Lỗi: ' + err.message;
-                    });
-            };
+            // Tải FFmpeg
+            await ffmpeg.load();
+            ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(file));
+
+            // Lấy kích thước video
+            await ffmpeg.run('-i', 'input.mp4', '-vf', 'crop=iw:ih/2:0:ih/2', 'output.mp4');
+
+            // Chia nhỏ video thành các khung hình từ nửa dưới
+            await ffmpeg.run('-i', 'output.mp4', '-vf', 'fps=1', 'output%d.png');
+
+            let extractedText = '';
+
+            // Nhận diện văn bản từ từng khung hình
+            for (let i = 0; i < 100; i++) {
+                try {
+                    const frame = `output${i}.png`;
+                    const data = ffmpeg.FS('readFile', frame);
+                    const blob = new Blob([data.buffer], { type: 'image/png' });
+                    const url = URL.createObjectURL(blob);
+
+                    const result = await Tesseract.recognize(url, 'vie', { logger: info => console.log(info) });
+                    extractedText += result.data.text + '\n'; // Ghi nhận văn bản
+                } catch (error) {
+                    // Nếu không có khung hình nào nữa
+                    break;
+                }
+            }
+
+            // Hiển thị kết quả
+            resultContainer.textContent = extractedText;
         }
 
         // Xử lý sự kiện cho nút trích xuất
         extractButton.addEventListener('click', () => {
-            const imageUrl = imageUrlInput.value.trim();
-            if (imageUrl) {
-                processImage(imageUrl);
-            } else if (fileInput.files.length > 0) {
-                processImage(URL.createObjectURL(fileInput.files[0]));
+            if (fileInput.files.length > 0) {
+                extractTextFromVideo(fileInput.files[0]);
             } else {
-                alert('Vui lòng dán URL hoặc chọn file!');
-            }
-        });
-
-        // Xử lý sự kiện khi nhấn Enter trong ô nhập URL
-        imageUrlInput.addEventListener('keydown', e => {
-            if (e.key === 'Enter') extractButton.click();
-        });
-
-        // Xử lý dán hình ảnh từ clipboard
-        imageUrlInput.addEventListener('paste', async (event) => {
-            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-            for (let item of items) {
-                if (item.kind === 'file') {
-                    const file = item.getAsFile();
-                    const imgUrl = URL.createObjectURL(file);
-                    imageUrlInput.value = imgUrl; // Đặt URL hình ảnh vào ô nhập liệu
-                    break; // Dừng lại sau khi dán một hình ảnh
-                }
+                alert('Vui lòng chọn video!');
             }
         });
     </script>
