@@ -9,24 +9,24 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; }
-        textarea { width: 100%; height: 150px; border-radius: 5px; padding: 10px; }
+        .input-area { border: 1px solid #ccc; border-radius: 5px; padding: 10px; min-height: 100px; position: relative; }
+        .input-area img { max-width: 100%; height: auto; position: absolute; top: 10px; left: 10px; }
         button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; }
         button:hover { background: #45a049; }
         pre { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; }
         #loading { display: none; text-align: center; margin-top: 20px; }
-        img { max-width: 100%; height: auto; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Trích Xuất Văn Bản Tiếng Trung Từ Ảnh</h1>
-        <textarea id="image-data" placeholder="Dán ảnh vào đây (Ctrl + V)"></textarea>
+        <div class="input-area" id="image-data" contenteditable="true" placeholder="Dán ảnh vào đây (Ctrl + V)">
+            <p style="color: #aaa; margin: 0;">Dán ảnh vào đây (Ctrl + V)</p>
+        </div>
         <button id="extract-button">Trích Xuất Văn Bản</button>
         <div id="loading">Đang trích xuất... Vui lòng chờ...</div>
         <h2>Kết Quả:</h2>
         <pre id="result"></pre>
-        <h2>Hình Ảnh Đã Dán:</h2>
-        <img id="image-preview" style="display:none;" alt="Image Preview"/> <!-- Thêm thẻ img để hiển thị ảnh -->
     </div>
 
     <script>
@@ -34,7 +34,6 @@
         const extractButton = document.getElementById('extract-button');
         const resultContainer = document.getElementById('result');
         const loadingContainer = document.getElementById('loading');
-        const imagePreview = document.getElementById('image-preview'); // Tham chiếu tới thẻ img
 
         // Hàm xử lý khi dán ảnh
         imageDataInput.addEventListener('paste', async (event) => {
@@ -43,9 +42,19 @@
                 if (items[i].type.startsWith('image/')) {
                     const blob = items[i].getAsFile();
                     const url = URL.createObjectURL(blob);
-                    imageDataInput.value = url; // Hiển thị URL trong textarea
-                    imagePreview.src = url; // Gán URL cho thẻ img để hiển thị ảnh
-                    imagePreview.style.display = 'block'; // Hiển thị thẻ img
+
+                    // Hiển thị ảnh trong input area
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Hình Ảnh Đã Dán';
+                    img.style.maxWidth = '100%'; // Đảm bảo ảnh không vượt quá chiều rộng
+
+                    // Xóa các hình ảnh trước đó nếu có
+                    const existingImages = imageDataInput.querySelectorAll('img');
+                    existingImages.forEach(image => image.remove());
+
+                    imageDataInput.appendChild(img); // Gán ảnh vào input area
+                    imageDataInput.setAttribute('data-image-url', url); // Lưu URL ảnh để sử dụng sau
                 }
             }
         });
@@ -69,7 +78,7 @@
 
         // Xử lý sự kiện cho nút trích xuất
         extractButton.addEventListener('click', () => {
-            const imageUrl = imageDataInput.value.trim();
+            const imageUrl = imageDataInput.getAttribute('data-image-url'); // Lấy URL từ thuộc tính data
             if (imageUrl) {
                 extractTextFromImage(imageUrl); // Gọi hàm trích xuất
             } else {
