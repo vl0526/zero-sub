@@ -14,6 +14,7 @@
         button { background: #4CAF50; color: white; border: none; cursor: pointer; }
         button:hover { background: #45a049; }
         pre { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; }
+        #loading { display: none; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -21,6 +22,7 @@
         <h1>Trích Xuất Văn Bản Từ Video</h1>
         <input type="file" id="file-input" accept="video/*" />
         <button id="extract-button">Trích Xuất Phụ Đề</button>
+        <div id="loading">Đang trích xuất... Vui lòng chờ...</div>
         <h2>Kết Quả:</h2>
         <pre id="result"></pre>
     </div>
@@ -29,9 +31,14 @@
         const fileInput = document.getElementById('file-input');
         const extractButton = document.getElementById('extract-button');
         const resultContainer = document.getElementById('result');
+        const loadingContainer = document.getElementById('loading');
 
         // Hàm trích xuất văn bản từ video
         async function extractTextFromVideo(file) {
+            // Hiển thị chỉ báo tải
+            loadingContainer.style.display = 'block';
+            resultContainer.textContent = ''; // Xóa kết quả trước đó
+
             // Khởi tạo FFmpeg
             const { createFFmpeg, fetchFile } = FFmpeg;
             const ffmpeg = createFFmpeg({ log: true });
@@ -56,7 +63,7 @@
                     const blob = new Blob([data.buffer], { type: 'image/png' });
                     const url = URL.createObjectURL(blob);
 
-                    // Thay đổi ngôn ngữ nhận diện sang tiếng Trung
+                    // Nhận diện văn bản bằng tiếng Trung
                     const result = await Tesseract.recognize(url, 'chi_sim', { logger: info => console.log(info) });
                     extractedText += result.data.text + '\n'; // Ghi nhận văn bản
                 } catch (error) {
@@ -68,6 +75,9 @@
             // Chỉ hiển thị 5 dòng văn bản đầu tiên
             const displayedLines = extractedText.split('\n').slice(0, 5).join('\n');
             resultContainer.textContent = displayedLines;
+
+            // Ẩn chỉ báo tải khi hoàn thành
+            loadingContainer.style.display = 'none';
         }
 
         // Xử lý sự kiện cho nút trích xuất
