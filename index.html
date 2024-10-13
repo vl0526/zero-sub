@@ -9,19 +9,57 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         h1 { text-align: center; }
-        .input-area { border: 1px solid #ccc; border-radius: 5px; padding: 10px; min-height: 100px; position: relative; }
-        .input-area img { max-width: 100%; height: auto; position: absolute; top: 10px; left: 10px; }
-        button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+        .input-area {
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            padding: 10px; 
+            min-height: 100px; 
+            position: relative; 
+            overflow: hidden; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            background: #fafafa;
+        }
+        .input-area img { 
+            max-width: 100%; 
+            max-height: 100%; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+        }
+        .placeholder {
+            color: #aaa; 
+            position: absolute; 
+            pointer-events: none; 
+            user-select: none; 
+        }
+        button { 
+            width: 100%; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            background: #4CAF50; 
+            color: white; 
+            border: none; 
+            cursor: pointer; 
+        }
         button:hover { background: #45a049; }
-        pre { background: #f0f0f0; padding: 10px; border: 1px solid #ccc; }
+        pre { 
+            background: #f0f0f0; 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            white-space: pre-wrap; 
+            word-wrap: break-word; 
+        }
         #loading { display: none; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Trích Xuất Văn Bản Tiếng Trung Từ Ảnh</h1>
-        <div class="input-area" id="image-data" contenteditable="true" placeholder="Dán ảnh vào đây (Ctrl + V)">
-            <p style="color: #aaa; margin: 0;">Dán ảnh vào đây (Ctrl + V)</p>
+        <div class="input-area" id="image-data" contenteditable="true">
+            <span class="placeholder">Dán ảnh vào đây (Ctrl + V)</span>
         </div>
         <button id="extract-button">Trích Xuất Văn Bản</button>
         <div id="loading">Đang trích xuất... Vui lòng chờ...</div>
@@ -43,18 +81,20 @@
                     const blob = items[i].getAsFile();
                     const url = URL.createObjectURL(blob);
 
-                    // Hiển thị ảnh trong input area
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = 'Hình Ảnh Đã Dán';
-                    img.style.maxWidth = '100%'; // Đảm bảo ảnh không vượt quá chiều rộng
-
                     // Xóa các hình ảnh trước đó nếu có
                     const existingImages = imageDataInput.querySelectorAll('img');
                     existingImages.forEach(image => image.remove());
 
+                    // Hiển thị ảnh trong input area
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Hình Ảnh Đã Dán';
                     imageDataInput.appendChild(img); // Gán ảnh vào input area
                     imageDataInput.setAttribute('data-image-url', url); // Lưu URL ảnh để sử dụng sau
+
+                    // Ẩn placeholder
+                    const placeholder = imageDataInput.querySelector('.placeholder');
+                    if (placeholder) placeholder.style.display = 'none';
                 }
             }
         });
