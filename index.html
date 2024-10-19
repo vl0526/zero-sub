@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Embed</title>
+    <title>Embed Video (YouTube & Douyin)</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,8 +28,8 @@
     </style>
 </head>
 <body>
-    <h1>Embed Video in iFrame</h1>
-    <input type="text" id="videoURL" placeholder="Nhập liên kết video...">
+    <h1>Embed YouTube and Douyin Videos</h1>
+    <input type="text" id="videoURL" placeholder="Nhập liên kết YouTube hoặc Douyin...">
     <button onclick="loadVideo()">Tải Video</button>
     
     <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
@@ -38,7 +38,24 @@
         function loadVideo() {
             var url = document.getElementById('videoURL').value;
             var iframe = document.getElementById('videoFrame');
-            iframe.src = url;
+            
+            // Nếu là YouTube
+            if (url.includes("youtube.com/watch?v=")) {
+                var videoID = url.split("v=")[1];
+                var ampersandPosition = videoID.indexOf("&");
+                if (ampersandPosition !== -1) {
+                    videoID = videoID.substring(0, ampersandPosition);
+                }
+                iframe.src = "https://www.youtube.com/embed/" + videoID;
+            
+            // Nếu là Douyin
+            } else if (url.includes("douyin.com")) {
+                // Với Douyin, bạn cần nhập chính xác liên kết nhúng
+                iframe.src = url;  // Giả sử bạn có liên kết nhúng đúng định dạng
+                
+            } else {
+                alert("Vui lòng nhập liên kết YouTube hoặc Douyin hợp lệ!");
+            }
         }
     </script>
 </body>
