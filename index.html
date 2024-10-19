@@ -3,128 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trích Xuất Văn Bản Tiếng Trung Từ Ảnh</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/2.1.1/tesseract.min.js"></script>
+    <title>Video Embed</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
-        .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; }
-        .input-area {
-            border: 1px solid #ccc; 
-            border-radius: 5px; 
-            padding: 10px; 
-            min-height: 100px; 
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            background: #fafafa;
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
         }
-        .input-area img { 
-            max-width: 100%; 
-            max-height: 100%; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
+        input[type="text"] {
+            width: 60%;
+            padding: 10px;
+            font-size: 16px;
         }
-        .placeholder {
-            color: #aaa; 
-            position: absolute; 
-            pointer-events: none; 
-            user-select: none; 
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-left: 10px;
         }
-        button { 
-            width: 100%; 
-            padding: 10px; 
-            margin: 10px 0; 
-            border-radius: 5px; 
-            background: #4CAF50; 
-            color: white; 
-            border: none; 
-            cursor: pointer; 
+        iframe {
+            width: 80%;
+            height: 400px;
+            margin-top: 20px;
         }
-        button:hover { background: #45a049; }
-        pre { 
-            background: #f0f0f0; 
-            padding: 10px; 
-            border: 1px solid #ccc; 
-            white-space: pre-wrap; 
-            word-wrap: break-word; 
-        }
-        #loading { display: none; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Trích Xuất Văn Bản Tiếng Trung Từ Ảnh</h1>
-        <div class="input-area" id="image-data" contenteditable="true">
-            <span class="placeholder">Dán ảnh vào đây (Ctrl + V)</span>
-        </div>
-        <button id="extract-button">Trích Xuất Văn Bản</button>
-        <div id="loading">Đang trích xuất... Vui lòng chờ...</div>
-        <h2>Kết Quả:</h2>
-        <pre id="result"></pre>
-    </div>
+    <h1>Embed Video in iFrame</h1>
+    <input type="text" id="videoURL" placeholder="Nhập liên kết video...">
+    <button onclick="loadVideo()">Tải Video</button>
+    
+    <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
 
     <script>
-        const imageDataInput = document.getElementById('image-data');
-        const extractButton = document.getElementById('extract-button');
-        const resultContainer = document.getElementById('result');
-        const loadingContainer = document.getElementById('loading');
-
-        // Hàm xử lý khi dán ảnh
-        imageDataInput.addEventListener('paste', async (event) => {
-            const items = (event.clipboardData || event.originalEvent.clipboardData).items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.startsWith('image/')) {
-                    const blob = items[i].getAsFile();
-                    const url = URL.createObjectURL(blob);
-
-                    // Xóa các hình ảnh trước đó nếu có
-                    const existingImages = imageDataInput.querySelectorAll('img');
-                    existingImages.forEach(image => image.remove());
-
-                    // Hiển thị ảnh trong input area
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = 'Hình Ảnh Đã Dán';
-                    imageDataInput.appendChild(img); // Gán ảnh vào input area
-                    imageDataInput.setAttribute('data-image-url', url); // Lưu URL ảnh để sử dụng sau
-
-                    // Ẩn placeholder
-                    const placeholder = imageDataInput.querySelector('.placeholder');
-                    if (placeholder) placeholder.style.display = 'none';
-                }
-            }
-        });
-
-        // Hàm trích xuất văn bản từ ảnh
-        async function extractTextFromImage(imageUrl) {
-            loadingContainer.style.display = 'block'; // Hiển thị thông báo tải
-            resultContainer.textContent = ''; // Xóa kết quả trước đó
-
-            try {
-                const { data: { text } } = await Tesseract.recognize(imageUrl, 'chi_sim', { // Chọn mô hình nhận diện tiếng Trung
-                    logger: info => console.log(info) // Ghi log thông tin
-                });
-                resultContainer.textContent = text; // Hiển thị văn bản trích xuất
-            } catch (error) {
-                resultContainer.textContent = 'Lỗi khi trích xuất văn bản: ' + error.message;
-            } finally {
-                loadingContainer.style.display = 'none'; // Ẩn thông báo tải
-            }
+        function loadVideo() {
+            var url = document.getElementById('videoURL').value;
+            var iframe = document.getElementById('videoFrame');
+            iframe.src = url;
         }
-
-        // Xử lý sự kiện cho nút trích xuất
-        extractButton.addEventListener('click', () => {
-            const imageUrl = imageDataInput.getAttribute('data-image-url'); // Lấy URL từ thuộc tính data
-            if (imageUrl) {
-                extractTextFromImage(imageUrl); // Gọi hàm trích xuất
-            } else {
-                alert('Vui lòng dán ảnh!');
-            }
-        });
     </script>
 </body>
 </html>
