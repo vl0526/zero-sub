@@ -1,62 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Video (YouTube & Douyin)</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
-        }
-        input[type="text"] {
-            width: 60%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-left: 10px;
-        }
-        iframe {
-            width: 80%;
-            height: 400px;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Chatbot</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Embed YouTube and Douyin Videos</h1>
-    <input type="text" id="videoURL" placeholder="Nhập liên kết YouTube hoặc Douyin...">
-    <button onclick="loadVideo()">Tải Video</button>
-    
-    <iframe id="videoFrame" src="" frameborder="0" allowfullscreen></iframe>
-
-    <script>
-        function loadVideo() {
-            var url = document.getElementById('videoURL').value;
-            var iframe = document.getElementById('videoFrame');
-            
-            // Nếu là YouTube
-            if (url.includes("youtube.com/watch?v=")) {
-                var videoID = url.split("v=")[1];
-                var ampersandPosition = videoID.indexOf("&");
-                if (ampersandPosition !== -1) {
-                    videoID = videoID.substring(0, ampersandPosition);
-                }
-                iframe.src = "https://www.youtube.com/embed/" + videoID;
-            
-            // Nếu là Douyin
-            } else if (url.includes("douyin.com")) {
-                // Với Douyin, bạn cần nhập chính xác liên kết nhúng
-                iframe.src = url;  // Giả sử bạn có liên kết nhúng đúng định dạng
-                
-            } else {
-                alert("Vui lòng nhập liên kết YouTube hoặc Douyin hợp lệ!");
-            }
-        }
-    </script>
+  <div class="chatbot-container">
+    <div class="header">
+      <h1>Chatbot AI</h1>
+    </div>
+    <div class="chatbox" id="chatbox"></div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Hỏi gì đó..." />
+      <button id="send-btn">Gửi</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
