@@ -1,1 +1,100 @@
+/* Reset mặc định */
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
+/* Toàn bộ giao diện chatbot */
+.chatbot-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 600px;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+/* Header */
+.header {
+  background-color: #007bff;
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  font-size: 1.5em;
+}
+
+/* Chatbox */
+.chatbox {
+  height: 400px;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.chatbox .message {
+  margin: 10px 0;
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  word-wrap: break-word;
+}
+
+.chatbox .message.user {
+  align-self: flex-end;
+  background-color: #007bff;
+  color: #fff;
+  text-align: right;
+}
+
+.chatbox .message.ai {
+  align-self: flex-start;
+  background-color: #f1f0f0;
+  color: #333;
+}
+
+/* Input area */
+.input-area {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1em;
+}
+
+#send-btn {
+  margin-left: 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+#send-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Scrollbar tùy chỉnh */
+.chatbox::-webkit-scrollbar {
+  width: 5px;
+}
+
+.chatbox::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 10px;
+}
