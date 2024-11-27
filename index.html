@@ -3,38 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visibility Detection</title>
+    <title>Full Screen & Visibility Detection</title>
     <style>
         body {
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
             text-align: center;
-            background-color: #f0f0f0;
         }
+
         #message {
-            font-size: 2em;
-            color: #333;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #warning {
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: red;
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="message">You are active on this page!</div>
+    <div>
+        <div id="message">Welcome! Click the button to enter Full Screen mode.</div>
+        <button id="fullscreen-btn">Go Full Screen</button>
+        <div id="warning">⚠️ You have exited Full Screen or left the page! ⚠️</div>
+    </div>
 
     <script>
+        const fullscreenBtn = document.getElementById("fullscreen-btn");
+        const warning = document.getElementById("warning");
         const message = document.getElementById("message");
 
+        // Kích hoạt chế độ toàn màn hình
+        fullscreenBtn.addEventListener("click", () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE11
+                document.documentElement.msRequestFullscreen();
+            }
+        });
+
+        // Theo dõi sự kiện thoát toàn màn hình
+        document.addEventListener("fullscreenchange", () => {
+            if (!document.fullscreenElement) {
+                warning.style.display = "block";
+                message.style.display = "none";
+            } else {
+                warning.style.display = "none";
+                message.style.display = "block";
+            }
+        });
+
+        document.addEventListener("webkitfullscreenchange", () => {
+            if (!document.webkitIsFullScreen) {
+                warning.style.display = "block";
+                message.style.display = "none";
+            } else {
+                warning.style.display = "none";
+                message.style.display = "block";
+            }
+        });
+
+        // Theo dõi sự kiện chuyển tab hoặc ứng dụng
         document.addEventListener("visibilitychange", () => {
             if (document.hidden) {
-                // Người dùng đã rời khỏi trang
-                message.textContent = "You left the page. Please come back!";
-                message.style.color = "red";
-            } else {
-                // Người dùng đã quay lại trang
-                message.textContent = "You are active on this page!";
-                message.style.color = "#333";
+                warning.style.display = "block";
+                message.style.display = "none";
+            } else if (document.fullscreenElement) {
+                warning.style.display = "none";
+                message.style.display = "block";
             }
         });
     </script>
