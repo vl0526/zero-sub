@@ -1,22 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Chatbot</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Screen Warning</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #warning {
+            display: none;
+            color: red;
+            font-size: 1.5em;
+        }
+    </style>
 </head>
 <body>
-  <div class="chatbot-container">
-    <div class="header">
-      <h1>Chatbot AI</h1>
+    <div>
+        <h1>Press the button to enter Full Screen</h1>
+        <button id="fullscreen-btn">Go Full Screen</button>
+        <p id="warning">You have exited Full Screen mode. Please return!</p>
     </div>
-    <div class="chatbox" id="chatbox"></div>
-    <div class="input-area">
-      <input type="text" id="user-input" placeholder="Hỏi gì đó..." />
-      <button id="send-btn">Gửi</button>
-    </div>
-  </div>
-  <script src="script.js"></script>
+
+    <script>
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const warning = document.getElementById('warning');
+
+        // Request Full Screen
+        fullscreenBtn.addEventListener('click', () => {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Safari
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE11
+                document.documentElement.msRequestFullscreen();
+            }
+        });
+
+        // Detect when user exits full screen
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (!document.webkitIsFullScreen) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('mozfullscreenchange', () => {
+            if (!document.mozFullScreen) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('MSFullscreenChange', () => {
+            if (!document.msFullscreenElement) {
+                warning.style.display = 'block';
+            } else {
+                warning.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
