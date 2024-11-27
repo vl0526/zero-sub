@@ -3,101 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Full Screen & Visibility Detection</title>
+    <title>Shooting Game</title>
     <style>
         body {
             margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            overflow: hidden;
+            background-color: #000;
+            color: #fff;
             font-family: Arial, sans-serif;
-            background-color: #1e1e1e;
-            color: #fff;
-            text-align: center;
         }
 
-        #message {
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #111;
+        }
+
+        #scoreboard {
+            position: fixed;
+            top: 10px;
+            left: 10px;
             font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 1em;
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            cursor: pointer;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
             border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        #warning {
-            margin-top: 20px;
-            font-size: 1.2em;
-            color: red;
-            display: none;
         }
     </style>
 </head>
 <body>
-    <div>
-        <div id="message">Welcome! Click the button to enter Full Screen mode.</div>
-        <button id="fullscreen-btn">Go Full Screen</button>
-        <div id="warning">⚠️ You have exited Full Screen or left the page! ⚠️</div>
-    </div>
+    <div id="scoreboard">Score: 0</div>
+    <canvas id="gameCanvas"></canvas>
 
     <script>
-        const fullscreenBtn = document.getElementById("fullscreen-btn");
-        const warning = document.getElementById("warning");
-        const message = document.getElementById("message");
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreboard = document.getElementById('scoreboard');
 
-        // Kích hoạt chế độ toàn màn hình
-        fullscreenBtn.addEventListener("click", () => {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.webkitRequestFullscreen) { // Safari
-                document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) { // IE11
-                document.documentElement.msRequestFullscreen();
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let score = 0;
+
+        // Tạo mục tiêu ngẫu nhiên
+        let target = {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            radius: 30,
+            color: 'red'
+        };
+
+        // Vẽ mục tiêu
+        function drawTarget() {
+            ctx.beginPath();
+            ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
+            ctx.fillStyle = target.color;
+            ctx.fill();
+            ctx.closePath();
+        }
+
+        // Di chuyển mục tiêu đến vị trí mới
+        function moveTarget() {
+            target.x = Math.random() * canvas.width;
+            target.y = Math.random() * canvas.height;
+        }
+
+        // Xử lý bắn
+        canvas.addEventListener('click', (e) => {
+            const dist = Math.hypot(e.clientX - target.x, e.clientY - target.y);
+            if (dist < target.radius) {
+                score++;
+                scoreboard.textContent = `Score: ${score}`;
+                moveTarget();
             }
         });
 
-        // Theo dõi sự kiện thoát toàn màn hình
-        document.addEventListener("fullscreenchange", () => {
-            if (!document.fullscreenElement) {
-                warning.style.display = "block";
-                message.style.display = "none";
-            } else {
-                warning.style.display = "none";
-                message.style.display = "block";
-            }
-        });
+        // Cập nhật game
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawTarget();
+            requestAnimationFrame(gameLoop);
+        }
 
-        document.addEventListener("webkitfullscreenchange", () => {
-            if (!document.webkitIsFullScreen) {
-                warning.style.display = "block";
-                message.style.display = "none";
-            } else {
-                warning.style.display = "none";
-                message.style.display = "block";
-            }
-        });
-
-        // Theo dõi sự kiện chuyển tab hoặc ứng dụng
-        document.addEventListener("visibilitychange", () => {
-            if (document.hidden) {
-                warning.style.display = "block";
-                message.style.display = "none";
-            } else if (document.fullscreenElement) {
-                warning.style.display = "none";
-                message.style.display = "block";
-            }
-        });
+        gameLoop();
     </script>
 </body>
 </html>
