@@ -3,158 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chess Game</title>
+    <title>Simple Chess Game</title>
+    <script src="https://cdn.jsdelivr.net/npm/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chess.js@0.10.3/dist/chess.min.js"></script>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f4;
-            margin: 0;
+            font-family: Arial, sans-serif;
+            text-align: center;
         }
-        #chessboard {
-            display: grid;
-            grid-template-columns: repeat(8, 80px);
-            grid-template-rows: repeat(8, 80px);
-            border: 2px solid #000;
+        #board1 {
+            width: 400px;
+            margin: 20px auto;
         }
-        .square {
-            width: 80px;
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .square.black {
-            background-color: #769656;
-        }
-        .square.white {
-            background-color: #eeeed2;
-        }
-        .piece {
-            width: 60%;
-            height: 60%;
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
             cursor: pointer;
-            background-size: cover;
-        }
-        #message {
-            position: absolute;
-            top: 20px;
-            font-size: 20px;
-            color: #333;
         }
     </style>
 </head>
 <body>
 
-    <div id="message">Click and drag to move the pieces.</div>
-    <div id="chessboard"></div>
+    <h1>Simple Chess Game</h1>
+    <div id="board1"></div>
+    <button id="resetButton">Reset Game</button>
 
     <script>
-        const board = document.getElementById('chessboard');
-        const message = document.getElementById('message');
+        // Khởi tạo game với Chess.js
+        var game = new Chess();
 
-        // Mảng đại diện cho bàn cờ (8x8)
-        const boardState = [
-            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
-            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['', '', '', '', '', '', '', ''],
-            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
-            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
-        ];
+        // Khởi tạo bàn cờ với Chessboard.js
+        var board = Chessboard('#board1', {
+            draggable: true,
+            dropOffBoard: 'trash', // Các quân cờ bị thả ra ngoài sẽ bị loại
+            sparePieces: true,
+            onDrop: handleMove, // Xử lý khi quân cờ được thả
+        });
 
-        const pieceImages = {
-            'bR': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Chess_rook_black.svg/600px-Chess_rook_black.svg.png',
-            'bN': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chess_knight_black.svg/600px-Chess_knight_black.svg.png',
-            'bB': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chess_bishop_black.svg/600px-Chess_bishop_black.svg.png',
-            'bQ': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chess_queen_black.svg/600px-Chess_queen_black.svg.png',
-            'bK': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Chess_king_black.svg/600px-Chess_king_black.svg.png',
-            'bP': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chess_pawn_black.svg/600px-Chess_pawn_black.svg.png',
-            'wR': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Chess_rook_white.svg/600px-Chess_rook_white.svg.png',
-            'wN': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chess_knight_white.svg/600px-Chess_knight_white.svg.png',
-            'wB': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Chess_bishop_white.svg/600px-Chess_bishop_white.svg.png',
-            'wQ': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chess_queen_white.svg/600px-Chess_queen_white.svg.png',
-            'wK': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chess_king_white.svg/600px-Chess_king_white.svg.png',
-            'wP': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Chess_pawn_white.svg/600px-Chess_pawn_white.svg.png'
-        };
+        // Bắt đầu bàn cờ
+        board.start();
 
-        let draggedPiece = null;
-
-        // Khởi tạo bàn cờ
-        function initializeBoard() {
-            boardState.forEach((row, rowIndex) => {
-                row.forEach((piece, colIndex) => {
-                    const square = document.createElement('div');
-                    square.classList.add('square');
-                    square.classList.add((rowIndex + colIndex) % 2 === 0 ? 'white' : 'black');
-                    board.appendChild(square);
-
-                    // Nếu có quân cờ, hiển thị
-                    if (piece) {
-                        const pieceElement = document.createElement('div');
-                        pieceElement.classList.add('piece');
-                        pieceElement.style.backgroundImage = `url(${pieceImages[piece]})`;
-                        pieceElement.setAttribute('draggable', 'true');
-                        pieceElement.dataset.piece = piece;
-                        pieceElement.dataset.row = rowIndex;
-                        pieceElement.dataset.col = colIndex;
-                        square.appendChild(pieceElement);
-
-                        pieceElement.addEventListener('dragstart', (e) => {
-                            draggedPiece = pieceElement;
-                            e.dataTransfer.setData('text', e.target.dataset.piece);
-                        });
-
-                        square.addEventListener('dragover', (e) => {
-                            e.preventDefault();
-                        });
-
-                        square.addEventListener('drop', (e) => {
-                            e.preventDefault();
-                            if (draggedPiece) {
-                                const targetRow = Math.floor(e.target.offsetTop / 80);
-                                const targetCol = Math.floor(e.target.offsetLeft / 80);
-                                if (draggedPiece.dataset.row !== targetRow || draggedPiece.dataset.col !== targetCol) {
-                                    boardState[targetRow][targetCol] = draggedPiece.dataset.piece;
-                                    boardState[draggedPiece.dataset.row][draggedPiece.dataset.col] = '';
-                                    draggedPiece.dataset.row = targetRow;
-                                    draggedPiece.dataset.col = targetCol;
-                                    e.target.appendChild(draggedPiece);
-                                    renderBoard();
-                                }
-                            }
-                        });
-                    }
-                });
+        // Hàm xử lý di chuyển quân cờ
+        function handleMove(source, target) {
+            var move = game.move({
+                from: source,
+                to: target
             });
+
+            // Nếu di chuyển không hợp lệ, quân cờ sẽ quay lại vị trí cũ
+            if (move === null) {
+                alert('Nước đi không hợp lệ!');
+                return 'snapback'; // Quay lại vị trí cũ
+            }
+
+            // Cập nhật giao diện sau mỗi nước đi
+            renderMoveHistory(game.history());
+            board.position(game.fen());
         }
 
-        // Render lại bàn cờ sau khi di chuyển
-        function renderBoard() {
-            const squares = document.querySelectorAll('.square');
-            let index = 0;
-            boardState.forEach((row, rowIndex) => {
-                row.forEach((piece, colIndex) => {
-                    const square = squares[index++];
-                    square.innerHTML = ''; // Xóa các quân cờ cũ
-                    if (piece) {
-                        const pieceElement = document.createElement('div');
-                        pieceElement.classList.add('piece');
-                        pieceElement.style.backgroundImage = `url(${pieceImages[piece]})`;
-                        pieceElement.dataset.piece = piece;
-                        pieceElement.dataset.row = rowIndex;
-                        pieceElement.dataset.col = colIndex;
-                        square.appendChild(pieceElement);
-                    }
-                });
-            });
+        // Hàm hiển thị lịch sử các nước đi
+        function renderMoveHistory(moves) {
+            var historyElement = document.getElementById('moveHistory');
+            historyElement.innerHTML = moves.join(' ');
         }
 
-        initializeBoard();
+        // Reset game khi nhấn nút Reset
+        document.getElementById('resetButton').addEventListener('click', function() {
+            game.reset();
+            board.start();
+        });
     </script>
 
 </body>
