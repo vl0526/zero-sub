@@ -3,172 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shooting Game with Timer & Mod Menu</title>
+    <title>Chess Game</title>
     <style>
         body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
             margin: 0;
-            overflow: hidden;
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
         }
-
-        #gameCanvas {
-            display: block;
-            margin: 0 auto;
-            background-color: #111;
+        #chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 80px);
+            grid-template-rows: repeat(8, 80px);
+            border: 2px solid #000;
         }
-
-        #scoreboard, #timer {
-            position: fixed;
-            top: 10px;
-            font-size: 1.5em;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
+        .square {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        #scoreboard {
-            left: 10px;
+        .square.black {
+            background-color: #769656;
         }
-
-        #timer {
-            right: 10px;
+        .square.white {
+            background-color: #eeeed2;
         }
-
-        #modMenu {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 1em;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 10px;
-            border-radius: 5px;
-            color: #fff;
+        .piece {
+            width: 60%;
+            height: 60%;
+            cursor: pointer;
+            background-size: cover;
         }
-
-        #modMenu label {
-            display: block;
-            margin: 5px 0;
+        #message {
+            position: absolute;
+            top: 20px;
+            font-size: 20px;
+            color: #333;
         }
     </style>
 </head>
 <body>
-    <div id="scoreboard">Score: 0</div>
-    <div id="timer">Time: 30</div>
-    <div id="modMenu">
-        <h3>Mod Menu</h3>
-        <label>
-            <input type="checkbox" id="autoAim"> Auto Aim
-        </label>
-        <label>
-            <input type="checkbox" id="autoShoot"> Auto Shoot
-        </label>
-    </div>
-    <canvas id="gameCanvas"></canvas>
+
+    <div id="message">Click and drag to move the pieces.</div>
+    <div id="chessboard"></div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreboard = document.getElementById('scoreboard');
-        const timerElement = document.getElementById('timer');
-        const autoAimCheckbox = document.getElementById('autoAim');
-        const autoShootCheckbox = document.getElementById('autoShoot');
+        const board = document.getElementById('chessboard');
+        const message = document.getElementById('message');
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        // Mảng đại diện cho bàn cờ (8x8)
+        const boardState = [
+            ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
+            ['bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP', 'bP'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP', 'wP'],
+            ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR']
+        ];
 
-        let score = 0;
-        let timeLeft = 30; // Thời gian đếm ngược (giây)
-        let gameActive = true; // Cờ trạng thái game
-
-        // Tạo mục tiêu ngẫu nhiên
-        let target = {
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            radius: 30,
-            color: 'red'
+        const pieceImages = {
+            'bR': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Chess_rook_black.svg/600px-Chess_rook_black.svg.png',
+            'bN': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chess_knight_black.svg/600px-Chess_knight_black.svg.png',
+            'bB': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Chess_bishop_black.svg/600px-Chess_bishop_black.svg.png',
+            'bQ': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chess_queen_black.svg/600px-Chess_queen_black.svg.png',
+            'bK': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Chess_king_black.svg/600px-Chess_king_black.svg.png',
+            'bP': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chess_pawn_black.svg/600px-Chess_pawn_black.svg.png',
+            'wR': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Chess_rook_white.svg/600px-Chess_rook_white.svg.png',
+            'wN': 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Chess_knight_white.svg/600px-Chess_knight_white.svg.png',
+            'wB': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Chess_bishop_white.svg/600px-Chess_bishop_white.svg.png',
+            'wQ': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chess_queen_white.svg/600px-Chess_queen_white.svg.png',
+            'wK': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chess_king_white.svg/600px-Chess_king_white.svg.png',
+            'wP': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Chess_pawn_white.svg/600px-Chess_pawn_white.svg.png'
         };
 
-        // Vẽ mục tiêu
-        function drawTarget() {
-            ctx.beginPath();
-            ctx.arc(target.x, target.y, target.radius, 0, Math.PI * 2);
-            ctx.fillStyle = target.color;
-            ctx.fill();
-            ctx.closePath();
-        }
+        let draggedPiece = null;
 
-        // Di chuyển mục tiêu đến vị trí mới
-        function moveTarget() {
-            target.x = Math.random() * canvas.width;
-            target.y = Math.random() * canvas.height;
-        }
+        // Khởi tạo bàn cờ
+        function initializeBoard() {
+            boardState.forEach((row, rowIndex) => {
+                row.forEach((piece, colIndex) => {
+                    const square = document.createElement('div');
+                    square.classList.add('square');
+                    square.classList.add((rowIndex + colIndex) % 2 === 0 ? 'white' : 'black');
+                    board.appendChild(square);
 
-        // Xử lý bắn
-        function shootAtTarget(x, y) {
-            const dist = Math.hypot(x - target.x, y - target.y);
-            if (dist < target.radius) {
-                score++;
-                scoreboard.textContent = `Score: ${score}`;
-                moveTarget();
-            }
-        }
+                    // Nếu có quân cờ, hiển thị
+                    if (piece) {
+                        const pieceElement = document.createElement('div');
+                        pieceElement.classList.add('piece');
+                        pieceElement.style.backgroundImage = `url(${pieceImages[piece]})`;
+                        pieceElement.setAttribute('draggable', 'true');
+                        pieceElement.dataset.piece = piece;
+                        pieceElement.dataset.row = rowIndex;
+                        pieceElement.dataset.col = colIndex;
+                        square.appendChild(pieceElement);
 
-        // Mod Menu: Auto Aim
-        function autoAim() {
-            if (autoAimCheckbox.checked) {
-                // Di chuyển chuột ảo đến mục tiêu (chỉ mô phỏng logic, không thực tế di chuyển chuột)
-                const event = new MouseEvent("mousemove", {
-                    clientX: target.x,
-                    clientY: target.y,
+                        pieceElement.addEventListener('dragstart', (e) => {
+                            draggedPiece = pieceElement;
+                            e.dataTransfer.setData('text', e.target.dataset.piece);
+                        });
+
+                        square.addEventListener('dragover', (e) => {
+                            e.preventDefault();
+                        });
+
+                        square.addEventListener('drop', (e) => {
+                            e.preventDefault();
+                            if (draggedPiece) {
+                                const targetRow = Math.floor(e.target.offsetTop / 80);
+                                const targetCol = Math.floor(e.target.offsetLeft / 80);
+                                if (draggedPiece.dataset.row !== targetRow || draggedPiece.dataset.col !== targetCol) {
+                                    boardState[targetRow][targetCol] = draggedPiece.dataset.piece;
+                                    boardState[draggedPiece.dataset.row][draggedPiece.dataset.col] = '';
+                                    draggedPiece.dataset.row = targetRow;
+                                    draggedPiece.dataset.col = targetCol;
+                                    e.target.appendChild(draggedPiece);
+                                    renderBoard();
+                                }
+                            }
+                        });
+                    }
                 });
-                canvas.dispatchEvent(event);
-            }
+            });
         }
 
-        // Mod Menu: Auto Shoot
-        function autoShoot() {
-            if (autoShootCheckbox.checked) {
-                shootAtTarget(target.x, target.y);
-            }
+        // Render lại bàn cờ sau khi di chuyển
+        function renderBoard() {
+            const squares = document.querySelectorAll('.square');
+            let index = 0;
+            boardState.forEach((row, rowIndex) => {
+                row.forEach((piece, colIndex) => {
+                    const square = squares[index++];
+                    square.innerHTML = ''; // Xóa các quân cờ cũ
+                    if (piece) {
+                        const pieceElement = document.createElement('div');
+                        pieceElement.classList.add('piece');
+                        pieceElement.style.backgroundImage = `url(${pieceImages[piece]})`;
+                        pieceElement.dataset.piece = piece;
+                        pieceElement.dataset.row = rowIndex;
+                        pieceElement.dataset.col = colIndex;
+                        square.appendChild(pieceElement);
+                    }
+                });
+            });
         }
 
-        // Cập nhật thời gian đếm ngược
-        function updateTimer() {
-            if (timeLeft > 0) {
-                timeLeft--;
-                timerElement.textContent = `Time: ${timeLeft}`;
-            } else {
-                gameActive = false;
-                timerElement.textContent = `Time: 0`;
-                alert(`Game Over! Your Score: ${score}`);
-                // Dừng game
-                clearInterval(timerInterval);
-            }
-        }
-
-        // Cập nhật game
-        function gameLoop() {
-            if (gameActive) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                drawTarget();
-                autoAim();
-                autoShoot();
-                requestAnimationFrame(gameLoop);
-            }
-        }
-
-        // Bắt đầu đếm ngược thời gian
-        const timerInterval = setInterval(updateTimer, 1000);
-
-        // Sự kiện nhấp chuột để bắn
-        canvas.addEventListener('click', (e) => {
-            shootAtTarget(e.clientX, e.clientY);
-        });
-
-        // Khởi động game
-        gameLoop();
+        initializeBoard();
     </script>
+
 </body>
 </html>
