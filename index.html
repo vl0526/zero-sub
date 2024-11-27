@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shooting Game</title>
+    <title>Shooting Game with Timer & Mod Menu</title>
     <style>
         body {
             margin: 0;
@@ -19,30 +19,68 @@
             background-color: #111;
         }
 
-        #scoreboard {
+        #scoreboard, #timer {
             position: fixed;
             top: 10px;
-            left: 10px;
             font-size: 1.5em;
             background: rgba(0, 0, 0, 0.7);
             padding: 10px;
             border-radius: 5px;
         }
+
+        #scoreboard {
+            left: 10px;
+        }
+
+        #timer {
+            right: 10px;
+        }
+
+        #modMenu {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 1em;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        #modMenu label {
+            display: block;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
     <div id="scoreboard">Score: 0</div>
+    <div id="timer">Time: 30</div>
+    <div id="modMenu">
+        <h3>Mod Menu</h3>
+        <label>
+            <input type="checkbox" id="autoAim"> Auto Aim
+        </label>
+        <label>
+            <input type="checkbox" id="autoShoot"> Auto Shoot
+        </label>
+    </div>
     <canvas id="gameCanvas"></canvas>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scoreboard = document.getElementById('scoreboard');
+        const timerElement = document.getElementById('timer');
+        const autoAimCheckbox = document.getElementById('autoAim');
+        const autoShootCheckbox = document.getElementById('autoShoot');
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         let score = 0;
+        let timeLeft = 30; // Thời gian đếm ngược (giây)
+        let gameActive = true; // Cờ trạng thái game
 
         // Tạo mục tiêu ngẫu nhiên
         let target = {
@@ -68,22 +106,68 @@
         }
 
         // Xử lý bắn
-        canvas.addEventListener('click', (e) => {
-            const dist = Math.hypot(e.clientX - target.x, e.clientY - target.y);
+        function shootAtTarget(x, y) {
+            const dist = Math.hypot(x - target.x, y - target.y);
             if (dist < target.radius) {
                 score++;
                 scoreboard.textContent = `Score: ${score}`;
                 moveTarget();
             }
-        });
+        }
+
+        // Mod Menu: Auto Aim
+        function autoAim() {
+            if (autoAimCheckbox.checked) {
+                // Di chuyển chuột ảo đến mục tiêu (chỉ mô phỏng logic, không thực tế di chuyển chuột)
+                const event = new MouseEvent("mousemove", {
+                    clientX: target.x,
+                    clientY: target.y,
+                });
+                canvas.dispatchEvent(event);
+            }
+        }
+
+        // Mod Menu: Auto Shoot
+        function autoShoot() {
+            if (autoShootCheckbox.checked) {
+                shootAtTarget(target.x, target.y);
+            }
+        }
+
+        // Cập nhật thời gian đếm ngược
+        function updateTimer() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                timerElement.textContent = `Time: ${timeLeft}`;
+            } else {
+                gameActive = false;
+                timerElement.textContent = `Time: 0`;
+                alert(`Game Over! Your Score: ${score}`);
+                // Dừng game
+                clearInterval(timerInterval);
+            }
+        }
 
         // Cập nhật game
         function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            drawTarget();
-            requestAnimationFrame(gameLoop);
+            if (gameActive) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawTarget();
+                autoAim();
+                autoShoot();
+                requestAnimationFrame(gameLoop);
+            }
         }
 
+        // Bắt đầu đếm ngược thời gian
+        const timerInterval = setInterval(updateTimer, 1000);
+
+        // Sự kiện nhấp chuột để bắn
+        canvas.addEventListener('click', (e) => {
+            shootAtTarget(e.clientX, e.clientY);
+        });
+
+        // Khởi động game
         gameLoop();
     </script>
 </body>
