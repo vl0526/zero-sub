@@ -24,45 +24,50 @@
         h1 {
             text-shadow: 0 0 10px #ff7f00;
             padding-top: 50px;
+            font-size: 40px;
         }
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
             width: 80%;
             margin: 50px auto;
         }
         .product {
-            background-color: rgba(0, 0, 0, 0.4);
+            background-color: rgba(0, 0, 0, 0.6);
             padding: 20px;
             border-radius: 15px;
             transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
         .product:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
         .product img {
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            object-fit: cover;
         }
         .button {
             background-color: #00bcd4;
             color: white;
-            padding: 15px;
+            padding: 15px 25px;
             font-size: 18px;
             border-radius: 8px;
             cursor: pointer;
             transition: transform 0.3s, background-color 0.3s;
+            border: none;
         }
         .button:hover {
             background-color: #0097a7;
             transform: scale(1.05);
         }
         .counter {
-            font-size: 22px;
+            font-size: 24px;
             margin: 20px 0;
             font-weight: bold;
         }
@@ -82,10 +87,15 @@
             border-radius: 8px;
             margin: 0 10px;
             cursor: pointer;
+            border: none;
+            transition: transform 0.3s, background-color 0.3s;
         }
         .btn:hover {
             background-color: #0097a7;
             transform: scale(1.05);
+        }
+        .header-container {
+            margin-top: 50px;
         }
     </style>
 </head>
@@ -97,7 +107,9 @@
     </audio>
 
     <!-- Tiêu đề "DONATE CHO CHỦ KÊNH" -->
-    <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
+    <div class="header-container">
+        <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
+    </div>
 
     <!-- Danh mục sản phẩm -->
     <div class="product-grid">
