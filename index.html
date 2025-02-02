@@ -5,40 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop Roblox | Donate</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Hiệu ứng nền động */
+        body {
+            background: linear-gradient(-45deg, #1e3a8a, #9333ea, #db2777, #f97316);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Hiệu ứng nút */
+        .buy-btn {
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .buy-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.4);
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-white">
+<body class="text-white flex justify-center items-center min-h-screen">
 
-    <div class="container mx-auto py-10 text-center">
-        <h1 class="text-4xl font-bold mb-6">💎 Shop Roblox - Donate 💎</h1>
+    <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold mb-8 animate-bounce">💎 Shop Roblox - Donate 💎</h1>
 
-        <!-- Mục 1: DARK VEST -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
-            <img src="https://tr.rbxcdn.com/9a240dfcfbdf82eb1b6cfb2a9581b50e/420/420/Shirt/Png/noFilter" alt="DARK VEST" class="w-40 mx-auto rounded">
-            <h2 class="text-2xl font-semibold mt-4">🦇 DARK VEST</h2>
-            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
-            <button onclick="buyItem('https://www.roblox.com/catalog/16275682348/DARK-VEST')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Mua với 5 Robux
-            </button>
-        </div>
+        <div class="flex flex-wrap justify-center gap-8">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-64 transform transition hover:scale-105">
+                <h2 class="text-2xl font-semibold mb-2">🦇 DARK VEST</h2>
+                <img src="https://tr.rbxcdn.com/180DAY-12b9ee01b99298ba21e415fa0de069a6/420/420/Shirt/Webp/noFilter" class="w-40 mx-auto rounded mb-3">
+                <p class="text-lg text-green-400">5 Robux</p>
+                <button onclick="buyItem('https://www.roblox.com/catalog/16275682348/DARK-VEST')" 
+                        class="buy-btn mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Mua ngay
+                </button>
+            </div>
 
-        <!-- Mục 2: DARK PANTS -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
-            <img src="https://tr.rbxcdn.com/fc0d5e48811cd1e3278e8ec6e56aa067/420/420/Pants/Png/noFilter" alt="DARK PANTS" class="w-40 mx-auto rounded">
-            <h2 class="text-2xl font-semibold mt-4">👖 DARK PANTS</h2>
-            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
-            <button onclick="buyItem('https://www.roblox.com/catalog/17314006050/DARK-PANTS')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Mua với 5 Robux
-            </button>
-        </div>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-64 transform transition hover:scale-105">
+                <h2 class="text-2xl font-semibold mb-2">👖 DARK PANTS</h2>
+                <img src="https://tr.rbxcdn.com/180DAY-b744b0160c34b6e733009597c80f3712/420/420/Pants/Webp/noFilter" class="w-40 mx-auto rounded mb-3">
+                <p class="text-lg text-green-400">5 Robux</p>
+                <button onclick="buyItem('https://www.roblox.com/catalog/17314006050/DARK-PANTS')" 
+                        class="buy-btn mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Mua ngay
+                </button>
+            </div>
 
-        <!-- Mục 3: Custom Item -->
-        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
-            <img src="https://tr.rbxcdn.com/placeholder-image/420/420/Shirt/Png/noFilter" alt="Vật phẩm đặc biệt" class="w-40 mx-auto rounded">
-            <h2 class="text-2xl font-semibold mt-4">✨ Vật phẩm đặc biệt</h2>
-            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
-            <button onclick="buyItem('https://www.roblox.com/catalog/')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Mua với 5 Robux
-            </button>
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg w-64 transform transition hover:scale-105">
+                <h2 class="text-2xl font-semibold mb-2">✨ Donate</h2>
+                <img src="https://static-00.iconduck.com/assets.00/donate-icon-512x512-rcex7jey.png" class="w-20 mx-auto mb-3">
+                <p class="text-lg text-green-400">Ủng hộ 5 Robux</p>
+                <button onclick="buyItem('https://www.roblox.com/catalog/')" 
+                        class="buy-btn mt-4 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                    Donate
+                </button>
+            </div>
         </div>
     </div>
 
