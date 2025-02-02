@@ -4,98 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔥 Donate Roblox 🔥</title>
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        /* Cài đặt màu nền gradient mát mẻ */
         body {
-            font-family: 'Oswald', sans-serif;
+            font-family: 'Poppins', sans-serif;
             color: white;
-            text-align: center;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #ff7b7b, #ff9b5d, #00bcd4, #4caf50);
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
             background-size: 400% 400%;
-            animation: gradient 10s ease infinite;
+            animation: gradientAnimation 10s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
         }
-        @keyframes gradient {
+
+        @keyframes gradientAnimation {
             0% {background-position: 0% 50%;}
             50% {background-position: 100% 50%;}
             100% {background-position: 0% 50%;}
         }
+
         h1 {
-            text-shadow: 0 0 10px #ff7f00;
-            padding-top: 50px;
-            font-size: 40px;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 30px rgba(255, 255, 255, 0.3);
         }
+
         .product-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
             width: 80%;
             margin: 50px auto;
         }
+
         .product {
             background-color: rgba(0, 0, 0, 0.6);
-            padding: 20px;
-            border-radius: 15px;
-            transition: transform 0.3s, box-shadow 0.3s;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
         }
+
         .product:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
         }
+
         .product img {
-            width: 250px;
-            height: 250px;
+            width: 100%;
+            height: auto;
             border-radius: 10px;
-            margin-bottom: 15px;
-            object-fit: cover;
+            transition: transform 0.4s ease;
         }
+
+        .product:hover img {
+            transform: scale(1.1);
+        }
+
         .button {
-            background-color: #00bcd4;
+            background-color: #2575fc;
             color: white;
-            padding: 15px 25px;
+            padding: 18px 30px;
             font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s, background-color 0.3s;
+            border-radius: 50px;
             border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
+
         .button:hover {
-            background-color: #0097a7;
-            transform: scale(1.05);
+            background-color: #6a11cb;
+            transform: translateY(-3px);
         }
+
         .counter {
-            font-size: 24px;
+            font-size: 2rem;
             margin: 20px 0;
-            font-weight: bold;
+            font-weight: 600;
         }
-        .audio-player {
-            display: none;
-        }
+
         .btn-container {
             display: flex;
             justify-content: center;
-            align-items: center;
+            gap: 20px;
         }
+
         .btn {
-            background-color: #00bcd4;
-            padding: 10px 20px;
+            background-color: #6a11cb;
+            padding: 12px 20px;
             color: white;
             font-size: 20px;
-            border-radius: 8px;
-            margin: 0 10px;
+            border-radius: 50px;
             cursor: pointer;
             border: none;
-            transition: transform 0.3s, background-color 0.3s;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
+
         .btn:hover {
-            background-color: #0097a7;
-            transform: scale(1.05);
-        }
-        .header-container {
-            margin-top: 50px;
+            background-color: #2575fc;
+            transform: translateY(-3px);
         }
     </style>
 </head>
@@ -107,9 +119,7 @@
     </audio>
 
     <!-- Tiêu đề "DONATE CHO CHỦ KÊNH" -->
-    <div class="header-container">
-        <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
-    </div>
+    <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
 
     <!-- Danh mục sản phẩm -->
     <div class="product-grid">
