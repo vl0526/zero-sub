@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🔥 Donate Roblox 🔥</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* Cài đặt màu nền gradient mát mẻ */
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto', sans-serif;
             color: white;
             margin: 0;
             padding: 0;
@@ -113,15 +112,11 @@
 </head>
 <body>
 
-    <!-- Nhạc nền tự động phát -->
-    <audio autoplay loop class="audio-player">
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
-    </audio>
-
-    <!-- Tiêu đề "DONATE CHO CHỦ KÊNH" -->
     <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
 
-    <!-- Danh mục sản phẩm -->
+    <!-- Nhạc nền từ YouTube (embed bằng iframe) -->
+    <iframe width="0" height="0" src="https://www.youtube.com/embed/jvkwVGOi9js?autoplay=1&loop=1&playlist=jvkwVGOi9js" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
     <div class="product-grid">
         <div class="product">
             <h3>DARK VEST</h3>
@@ -140,22 +135,18 @@
         <div class="product">
             <h3>✨ Donate</h3>
 
-            <!-- Hiển thị giá trị donation -->
             <div class="counter" id="donateValue">20</div>
 
-            <!-- Nút điều chỉnh -->
             <div class="btn-container">
                 <button class="btn" onclick="decreaseValue()">-</button>
                 <button class="btn" onclick="increaseValue()">+</button>
             </div>
 
-            <!-- Nút Donate -->
             <button class="button" onclick="donate()">Donate</button>
         </div>
     </div>
 
     <script>
-        // Danh sách giá trị donation tương ứng với Game Pass IDs
         const donateValues = [20, 30, 40, 50, 60, 70, 80, 90, 99, 200, 300, 400, 500, 600, 700, 800, 900, 999];
         const gamePassIDs = [
             738379181, 730606561, 730371975, 731237909, 716613023, 705843234, 705591558, 705767273, 
@@ -163,15 +154,12 @@
             700003328, 730266623
         ];
 
-        // Giá trị hiện tại
         let currentValueIndex = 0;
 
-        // Cập nhật giá trị donation hiển thị
         function updateDonateValue() {
             document.getElementById("donateValue").innerText = donateValues[currentValueIndex];
         }
 
-        // Giảm giá trị donation
         function decreaseValue() {
             if (currentValueIndex > 0) {
                 currentValueIndex--;
@@ -179,7 +167,6 @@
             }
         }
 
-        // Tăng giá trị donation
         function increaseValue() {
             if (currentValueIndex < donateValues.length - 1) {
                 currentValueIndex++;
@@ -187,13 +174,11 @@
             }
         }
 
-        // Mở trang Roblox Game Pass khi Donate
         function donate() {
             const gamePassID = gamePassIDs[currentValueIndex];
             window.open(`https://www.roblox.com/vi/game-pass/${gamePassID}`, '_blank');
         }
 
-        // Khởi tạo giá trị ban đầu
         updateDonateValue();
     </script>
 
