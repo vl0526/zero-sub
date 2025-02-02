@@ -1,96 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
-    <style>
-        /* Các kiểu CSS cho giao diện */
-        body { font-family: Arial, sans-serif; display: flex; padding: 20px; }
-        #login, #chat { display: none; flex-grow: 1; }
-        #userList { width: 200px; background: #f1f1f1; height: 100vh; padding: 10px; border-right: 1px solid #ccc; overflow-y: auto; }
-        #userList button { width: 100%; margin: 5px 0; }
-        .chat-box { flex-grow: 1; height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
-        .message { margin: 5px 0; padding: 10px; border-radius: 5px; background: #f1f1f1; }
-        input[type="text"], input[type="password"] { width: 80%; padding: 10px; margin-right: 10px; }
-        button { padding: 10px; }
-        #roomControls { position: fixed; top: 10px; right: 10px; background: #fff; padding: 10px; border: 1px solid #ccc; }
-        #toggleUserList { position: absolute; top: 10px; left: 10px; }
-    </style>
+    <title>Shop Roblox | Donate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <!-- Giao diện Đăng ký và Đăng nhập -->
-    <div id="login">
-        <h1>Đăng nhập</h1>
-        <input type="text" id="usernameInput" placeholder="Tên người dùng...">
-        <input type="password" id="passwordInput" placeholder="Mật khẩu...">
-        <button onclick="login()">Đăng nhập</button>
-        <hr>
-        <h2>Chưa có tài khoản?</h2>
-        <input type="text" id="registerUsername" placeholder="Tên người dùng...">
-        <input type="password" id="registerPassword" placeholder="Mật khẩu...">
-        <button onclick="register()">Đăng ký</button>
-    </div>
+<body class="bg-gray-900 text-white">
 
-    <div id="chat" style="display:none;">
-        <!-- Giao diện Chat -->
-        <button id="toggleUserList" onclick="toggleUserList()">Ẩn/Hiện Danh Sách</button>
-        <div id="userList">
-            <h3>Danh sách người dùng</h3>
-            <div id="userListContent"></div>
-            <button onclick="createRoom()">Tạo phòng</button>
+    <div class="container mx-auto py-10 text-center">
+        <h1 class="text-4xl font-bold mb-6">💎 Shop Roblox - Donate 💎</h1>
+
+        <!-- Mục 1: DARK VEST -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+            <img src="https://tr.rbxcdn.com/9a240dfcfbdf82eb1b6cfb2a9581b50e/420/420/Shirt/Png/noFilter" alt="DARK VEST" class="w-40 mx-auto rounded">
+            <h2 class="text-2xl font-semibold mt-4">🦇 DARK VEST</h2>
+            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
+            <button onclick="buyItem('https://www.roblox.com/catalog/16275682348/DARK-VEST')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Mua với 5 Robux
+            </button>
         </div>
-        <div class="chat-box" id="chatBox"></div>
-        <input type="text" id="messageInput" placeholder="Nhập tin nhắn...">
-        <button onclick="sendMessage()">Gửi</button>
-        <div id="roomControls">
-            <button onclick="closeRoom()">Đóng phòng</button>
-            <button onclick="kickUser()">Đá người dùng</button>
+
+        <!-- Mục 2: DARK PANTS -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+            <img src="https://tr.rbxcdn.com/fc0d5e48811cd1e3278e8ec6e56aa067/420/420/Pants/Png/noFilter" alt="DARK PANTS" class="w-40 mx-auto rounded">
+            <h2 class="text-2xl font-semibold mt-4">👖 DARK PANTS</h2>
+            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
+            <button onclick="buyItem('https://www.roblox.com/catalog/17314006050/DARK-PANTS')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Mua với 5 Robux
+            </button>
+        </div>
+
+        <!-- Mục 3: Custom Item -->
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-6">
+            <img src="https://tr.rbxcdn.com/placeholder-image/420/420/Shirt/Png/noFilter" alt="Vật phẩm đặc biệt" class="w-40 mx-auto rounded">
+            <h2 class="text-2xl font-semibold mt-4">✨ Vật phẩm đặc biệt</h2>
+            <p class="text-lg">Giá: <span class="text-green-400">5 Robux</span></p>
+            <button onclick="buyItem('https://www.roblox.com/catalog/')" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Mua với 5 Robux
+            </button>
         </div>
     </div>
 
     <script>
-        let socket, username, currentRoomId, currentRoomUsers = [], isOwner = false;
-
-        // Đăng ký tài khoản mới
-        function register() {
-            const registerUsername = document.getElementById('registerUsername').value;
-            const registerPassword = document.getElementById('registerPassword').value;
-            if (registerUsername && registerPassword) {
-                socket.send(JSON.stringify({ type: 'register', username: registerUsername, password: registerPassword }));
-            } else {
-                alert('Vui lòng điền đủ thông tin!');
-            }
+        function buyItem(url) {
+            window.open(url, "_blank");
         }
-
-        // Đăng nhập
-        function login() {
-            const usernameInput = document.getElementById('usernameInput').value;
-            const passwordInput = document.getElementById('passwordInput').value;
-            if (usernameInput && passwordInput) {
-                socket.send(JSON.stringify({ type: 'login', username: usernameInput, password: passwordInput }));
-            } else {
-                alert('Vui lòng điền đủ thông tin!');
-            }
-        }
-
-        // Kết nối WebSocket và xử lý tin nhắn
-        socket = new WebSocket('ws://localhost:8080');
-        socket.onopen = () => console.log('Kết nối thành công');
-        socket.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.type === 'success') {
-                alert(data.message);
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('chat').style.display = 'block';
-                username = data.username;
-            } else if (data.type === 'error') {
-                alert(data.message);
-            }
-            // Cập nhật giao diện chat với các tin nhắn và sự kiện
-        };
-
-        // Các hàm khác như gửi tin nhắn, tạo phòng, chat...
     </script>
+
 </body>
 </html>
