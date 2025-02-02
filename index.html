@@ -3,20 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 Shop Roblox 🔥</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>🔥 Donate Roblox 🔥</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Oswald', sans-serif;
             color: white;
             text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            background: linear-gradient(135deg, #ff7b7b, #ff9b5d, #00bcd4, #4caf50, #9c27b0);
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff7b7b, #ff9b5d, #00bcd4, #4caf50);
             background-size: 400% 400%;
             animation: gradient 10s ease infinite;
         }
@@ -25,97 +21,88 @@
             50% {background-position: 100% 50%;}
             100% {background-position: 0% 50%;}
         }
-        .grid {
+        h1 {
+            text-shadow: 0 0 10px #ff7f00;
+            padding-top: 50px;
+        }
+        .product-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
-            width: 90%;
-            max-width: 1200px;
-            margin-top: 50px;
+            width: 80%;
+            margin: 50px auto;
         }
-        .card {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+        .product {
+            background-color: rgba(0, 0, 0, 0.4);
             padding: 20px;
             border-radius: 15px;
-            width: 100%;
-            text-align: center;
-            transition: .3s;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .card:hover {
+        .product:hover {
             transform: scale(1.05);
-            box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
         }
-        .fire-button {
+        .product img {
+            width: 200px;
+            height: 200px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .button {
             background-color: #00bcd4;
             color: white;
-            padding: 12px 24px;
+            padding: 15px;
             font-size: 18px;
             border-radius: 8px;
-            width: 100%;
             cursor: pointer;
-            transition: .3s;
+            transition: transform 0.3s, background-color 0.3s;
         }
-        .fire-button:hover {
+        .button:hover {
             background-color: #0097a7;
             transform: scale(1.05);
-            box-shadow: 0px 0px 15px rgba(0, 188, 212, 0.5);
         }
-        .glow {
-            text-shadow: 0 0 5px #ff7300, 0 0 10px #ff7300, 0 0 15px #ff7300;
-        }
-        .bg-animation {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: url('https://i.imgur.com/JvIMpVG.jpg') repeat;
-            opacity: .1;
-            z-index: -1;
+        .audio-player {
+            display: none;
         }
     </style>
 </head>
 <body>
 
+    <h1>🔥 Donate Cho Chủ Kênh Roblox 🔥</h1>
+
     <!-- Nhạc nền tự động phát -->
-    <audio autoplay loop>
+    <audio autoplay loop class="audio-player">
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
     </audio>
 
-    <!-- Background Animation -->
-    <div class="bg-animation"></div>
-
-    <!-- Tiêu đề "DONATE CHO CHỦ KÊNH" -->
-    <h1 class="text-4xl font-bold mb-5 glow">🔥 DONATE CHO CHỦ KÊNH 🔥</h1>
-
     <!-- Danh mục sản phẩm -->
-    <div class="grid">
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-2">🦇 DARK VEST</h2>
-            <img src="https://tr.rbxcdn.com/180DAY-12b9ee01b99298ba21e415fa0de069a6/420/420/Shirt/Webp/noFilter" class="w-40 mx-auto rounded mb-3">
-            <p class="text-lg text-green-400">5 Robux</p>
-            <div onclick="buyItem('https://www.roblox.com/catalog/16275682348/DARK-VEST')" class="fire-button mt-3">Mua ngay</div>
+    <div class="product-grid">
+        <div class="product">
+            <h3>DARK VEST</h3>
+            <img src="https://tr.rbxcdn.com/180DAY-12b9ee01b99298ba21e415fa0de069a6/420/420/Shirt/Webp/noFilter" alt="Dark Vest">
+            <p>Giá: 5 Robux</p>
+            <button class="button" onclick="window.open('https://www.roblox.com/catalog/16275682348/DARK-VEST')">Mua Ngay</button>
         </div>
 
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-2">👖 DARK PANTS</h2>
-            <img src="https://tr.rbxcdn.com/180DAY-b744b0160c34b6e733009597c80f3712/420/420/Pants/Webp/noFilter" class="w-40 mx-auto rounded mb-3">
-            <p class="text-lg text-green-400">5 Robux</p>
-            <div onclick="buyItem('https://www.roblox.com/catalog/17314006050/DARK-PANTS')" class="fire-button mt-3">Mua ngay</div>
+        <div class="product">
+            <h3>DARK PANTS</h3>
+            <img src="https://tr.rbxcdn.com/180DAY-b744b0160c34b6e733009597c80f3712/420/420/Pants/Webp/noFilter" alt="Dark Pants">
+            <p>Giá: 5 Robux</p>
+            <button class="button" onclick="window.open('https://www.roblox.com/catalog/17314006050/DARK-PANTS')">Mua Ngay</button>
         </div>
 
-        <div class="card">
-            <h2 class="text-2xl font-semibold mb-2">✨ Donate</h2>
-            <img src="https://static-00.iconduck.com/assets.00/donate-icon-512x512-rcex7jey.png" class="w-20 mx-auto mb-3">
-            <p class="text-lg text-green-400">Ủng hộ 5 Robux</p>
-            <div onclick="buyItem('https://www.roblox.com/catalog/')" class="fire-button mt-3">Donate</div>
+        <div class="product">
+            <h3>✨ Donate</h3>
+            <img src="https://static-00.iconduck.com/assets.00/donate-icon-512x512-rcex7jey.png" alt="Donate">
+            <p>Ủng hộ 5 Robux</p>
+            <button class="button" onclick="window.open('https://www.roblox.com/catalog/')">Donate</button>
         </div>
     </div>
 
     <script>
-        function buyItem(url) {
-            window.open(url, "_blank");
+        // Tính năng mở trang web khi nhấn nút
+        function openLink(url) {
+            window.open(url, '_blank');
         }
     </script>
 
